@@ -36,6 +36,8 @@ public class ArrivalDate implements Criteria {
 
 			// Verificar si la travesía tiene el destino y la fecha de llegada correctos
 			boolean hasCorrectDestiny = trip.hasADestinyTerminal(destiny);
+			System.out.println("destiny inside: " + destiny);
+			System.out.println("Checking hasCorrect: " + trip.hasADestinyTerminal(destiny));
 			boolean hasCorrectArrivalDate = trip.dateArrivedToDestiny(destiny).equals(arrivalDate);
 
 			// Mensajes de depuración para verificar los resultados de las condiciones

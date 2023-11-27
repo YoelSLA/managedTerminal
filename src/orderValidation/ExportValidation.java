@@ -15,21 +15,21 @@ import truck.Truck;
  */
 public final class ExportValidation extends OrderValidation {
 
-	public static void validateOrderFor(ExportOrder exportOrder, ManagedTerminal terminal) {
-		validateDriverOf(exportOrder, terminal);
-		validateTruckOf(exportOrder, terminal);
+	public static void validateOrderFor(ExportOrder exportOrder, ManagedTerminal managedTerminal) {
+		validateDriverOf(exportOrder, managedTerminal);
+		validateTruckOf(exportOrder, managedTerminal);
 
 	}
 
-	private static void validateDriverOf(ExportOrder exportOrder, ManagedTerminal terminal) {
-		if (!terminal.isItRegistered(exportOrder.getDriver())) {
+	private static void validateDriverOf(ExportOrder exportOrder, ManagedTerminal managedTerminal) {
+		if (!managedTerminal.isItRegistered(exportOrder.getDriver())) {
 			throw new RuntimeException("The driver is not registered at the managed terminal.");
 		}
 
 	}
 
-	private static void validateTruckOf(ExportOrder exportOrder, ManagedTerminal terminal) {
-		if (!terminal.isItRegistered(exportOrder.getTruck())) {
+	private static void validateTruckOf(ExportOrder exportOrder, ManagedTerminal managedTerminal) {
+		if (!managedTerminal.isItRegistered(exportOrder.getTruck())) {
 			throw new RuntimeException("El camión no esta registrado en la terminal gestionada.");
 		}
 	}

@@ -26,8 +26,7 @@ class TripTest {
 	private Stretch buenosAiresSantiago;
 	private Stretch santiagoQuito;
 	private Stretch quitoLima;
-	private Stretch limaCaracas;
-	private Stretch caracasBuenosAires;
+	private Stretch limaBuenosAires;
 	private MaritimeCircuit maritimeCircuit;
 	private Ship ship;
 	private LocalDateTime startDate;
@@ -38,20 +37,17 @@ class TripTest {
 		// TERMINAL
 		Terminal santiago = mock(Terminal.class);
 		Terminal lima = mock(Terminal.class);
-		Terminal caracas = mock(Terminal.class);
 
 		when(buenosAires.getName()).thenReturn("Puerto de Buenos Aires");
 		when(santiago.getName()).thenReturn("Puerto de Santiago");
 		when(quito.getName()).thenReturn("Puerto de Quito");
 		when(lima.getName()).thenReturn("Puerto de Lima");
-		when(caracas.getName()).thenReturn("Puerto de Caracas");
 
 		// STRETCH
 		buenosAiresSantiago = mock(Stretch.class);
 		santiagoQuito = mock(Stretch.class);
 		quitoLima = mock(Stretch.class);
-		limaCaracas = mock(Stretch.class);
-		caracasBuenosAires = mock(Stretch.class);
+		limaBuenosAires = mock(Stretch.class);
 
 		when(buenosAiresSantiago.getOrigin()).thenReturn(buenosAires);
 		when(buenosAiresSantiago.getDestiny()).thenReturn(santiago);
@@ -65,19 +61,15 @@ class TripTest {
 		when(quitoLima.getDestiny()).thenReturn(lima);
 		when(quitoLima.getTime()).thenReturn(Duration.ofHours(7));
 
-		when(limaCaracas.getOrigin()).thenReturn(lima);
-		when(limaCaracas.getDestiny()).thenReturn(caracas);
-		when(limaCaracas.getTime()).thenReturn(Duration.ofHours(9));
-
-		when(caracasBuenosAires.getOrigin()).thenReturn(caracas);
-		when(caracasBuenosAires.getDestiny()).thenReturn(buenosAires);
-		when(caracasBuenosAires.getTime()).thenReturn(Duration.ofHours(7));
+		when(limaBuenosAires.getOrigin()).thenReturn(lima);
+		when(limaBuenosAires.getDestiny()).thenReturn(buenosAires);
+		when(limaBuenosAires.getTime()).thenReturn(Duration.ofHours(15));
 
 		// MARITIME CIRCUIT
 		maritimeCircuit = mock(MaritimeCircuit.class);
 
-		when(maritimeCircuit.getStretchs()).thenReturn(
-				Arrays.asList(buenosAiresSantiago, santiagoQuito, quitoLima, limaCaracas, caracasBuenosAires));
+		when(maritimeCircuit.getStretchs())
+				.thenReturn(Arrays.asList(buenosAiresSantiago, santiagoQuito, quitoLima, limaBuenosAires));
 
 		// SHIP
 		ship = mock(Ship.class);

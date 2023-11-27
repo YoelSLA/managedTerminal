@@ -52,16 +52,16 @@ public class ShippingLine {
 				.collect(Collectors.toList());
 	}
 
-	public List<MaritimeCircuit> maritimeCircuitsContaining3(Terminal origin, Terminal destiny) {
-		return getMaritimeCircuits().stream()
-				.filter(m -> m.isTheOriginTerminal(origin) && m.isTheDestinyTerminal(destiny)
-						&& m.isTheOriginTerminalBeforeDestinationTerminal(origin, destiny))
-				.collect(Collectors.toList());
-	}
-
-	public List<MaritimeCircuit> maritimeCircuitsContaining2(Terminal origin, Terminal destiny) {
-		return getMaritimeCircuits().stream().filter(m -> m.areTheTerminalsThere(origin, destiny)).toList();
-	}
+//	public List<MaritimeCircuit> maritimeCircuitsContaining3(Terminal origin, Terminal destiny) {
+//		return getMaritimeCircuits().stream()
+//				.filter(m -> m.isTheOriginTerminal(origin) && m.isTheDestinyTerminal(destiny)
+//						&& m.isTheOriginTerminalBeforeDestinationTerminal(origin, destiny))
+//				.collect(Collectors.toList());
+//	}
+//
+//	public List<MaritimeCircuit> maritimeCircuitsContaining2(Terminal origin, Terminal destiny) {
+//		return getMaritimeCircuits().stream().filter(m -> m.areTheTerminalsThere(origin, destiny)).toList();
+//	}
 
 	public void registerMaritimeCircuit(MaritimeCircuit maritimeCircuit) {
 		maritimeCircuits.add(maritimeCircuit);

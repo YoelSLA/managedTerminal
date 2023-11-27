@@ -19,16 +19,21 @@ import terminal.ManagedTerminal;
 import terminal.Terminal;
 import trip.Trip;
 
-class ArrivalDateTest2 {
+class ArrivalDateTest {
 
 	private Trip tripOne;
 	private Trip tripTwo;
-	protected Stretch buenosAiresSantiago;
-	protected Stretch santiagoQuito;
-	protected Stretch quitoLima;
-	protected Stretch limaCaracas;
-	protected Stretch caracasBuenosAires;
-	protected Stretch santiagoLima;
+	private Stretch buenosAiresSantiago;
+	private Stretch santiagoQuito;
+	private Stretch quitoLima;
+	private Stretch limaCaracas;
+	private Stretch caracasBuenosAires;
+	private Stretch santiagoLima;
+	private ManagedTerminal buenosAires;
+	private Terminal santiago;
+	private Terminal quito;
+	private Terminal lima;
+	private Terminal caracas;
 	private MaritimeCircuit maritimeCircuitOne;
 	private MaritimeCircuit maritimeCircuitTwo;
 	private ArrivalDate arrivalDate;
@@ -36,11 +41,11 @@ class ArrivalDateTest2 {
 	@BeforeEach
 	void setUp() {
 		// TERMINAL
-		ManagedTerminal buenosAires = mock(ManagedTerminal.class);
-		Terminal santiago = mock(Terminal.class);
-		Terminal quito = mock(Terminal.class);
-		Terminal lima = mock(Terminal.class);
-		Terminal caracas = mock(Terminal.class);
+		buenosAires = mock(ManagedTerminal.class);
+		santiago = mock(Terminal.class);
+		quito = mock(Terminal.class);
+		lima = mock(Terminal.class);
+		caracas = mock(Terminal.class);
 
 		// STRETCH
 		buenosAiresSantiago = mock(Stretch.class);
@@ -85,10 +90,10 @@ class ArrivalDateTest2 {
 
 		// TRIP
 		tripOne = mock(Trip.class);
-		tripTwo = mock(Trip.class);
-
 		when(tripOne.getMaritimeCircuit()).thenReturn(maritimeCircuitOne);
 		when(tripOne.getStartDate()).thenReturn(LocalDateTime.of(2023, 11, 26, 12, 0));
+
+		tripTwo = mock(Trip.class);
 		when(tripTwo.getMaritimeCircuit()).thenReturn(maritimeCircuitTwo);
 		when(tripTwo.getStartDate()).thenReturn(LocalDateTime.of(2023, 12, 1, 12, 0));
 
@@ -101,6 +106,7 @@ class ArrivalDateTest2 {
 	void x() {
 		System.out.println("TRIP_ONE: " + tripOne);
 		System.out.println("TRIP_TWO: " + tripTwo);
+		System.out.println("QUITO" + quito);
 
 		assertEquals(List.of(tripOne), arrivalDate.filterTrips(List.of(tripOne, tripTwo)));
 	}
