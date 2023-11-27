@@ -1,20 +1,21 @@
 package search.selection.selectionDate;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import search.criteria.Criteria;
 import search.selection.Selection;
-import trip.Trip;
+import terminal.Terminal;
 
 public abstract class SelectionDate implements Selection {
 
 	private Criteria criteria;
 	private LocalDateTime dateForSearch;
+	protected Terminal terminal;
 
-	public SelectionDate(Criteria criteria, LocalDateTime dateForSearch) {
+	public SelectionDate(Criteria criteria, LocalDateTime dateForSearch, Terminal terminal) {
 		this.criteria = criteria;
 		this.dateForSearch = dateForSearch;
+		this.terminal = terminal;
 	}
 
 	public Criteria getCriteria() {
@@ -39,8 +40,5 @@ public abstract class SelectionDate implements Selection {
 	public void setCriteria(Criteria criteria) {
 		this.criteria = criteria;
 	}
-
-	@Override
-	public abstract List<Trip> filterTrips(List<Trip> trips);
 
 }

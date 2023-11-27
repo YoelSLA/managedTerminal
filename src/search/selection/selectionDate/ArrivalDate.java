@@ -9,22 +9,19 @@ import trip.Trip;
 
 public class ArrivalDate extends SelectionDate {
 
-	private Terminal destiny;
-
 	public ArrivalDate(Criteria criteria, LocalDateTime arrivalDate, Terminal destiny) {
-		super(criteria, arrivalDate);
-		this.destiny = destiny;
+		super(criteria, arrivalDate, destiny);
 	}
 
 	@Override
 	public List<Trip> filterTrips(List<Trip> trips) {
 		return trips.stream()
-				.filter(t -> t.hasADestinyTerminal(destiny) && this.searchByCriteriaTo(t.dateArrivedToDestiny(destiny)))
+				.filter(t -> t.hasADestinyTerminal(terminal) && this.searchByCriteriaTo(t.dateArrivedToDestiny(terminal)))
 				.toList();
 	}
 
 	public Terminal getDestiny() {
-		return destiny;
+		return terminal;
 	}
 
 }
