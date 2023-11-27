@@ -1,13 +1,7 @@
 package search.criteria;
 
-import java.util.List;
+public enum Criteria {
 
-import search.Search;
-import trip.Trip;
-
-public interface Criteria extends Search {
-
-	@Override
-	public List<Trip> filterTrips(List<Trip> trips);
+	GREATHER_THAN, EQUALS, LESS_THAN
 
 }

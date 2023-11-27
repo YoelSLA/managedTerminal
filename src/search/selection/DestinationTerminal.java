@@ -1,10 +1,10 @@
-package search.criteria;
+package search.selection;
 
 import java.util.List;
 
 import trip.Trip;
 
-public class DestinationTerminal implements Criteria {
+public class DestinationTerminal implements Selection {
 
 	@Override
 	public List<Trip> filterTrips(List<Trip> trips) {

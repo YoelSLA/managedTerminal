@@ -74,4 +74,8 @@ public class Trip {
 		return startDate.plus(durationOfHours, ChronoUnit.HOURS);
 	}
 
+	public Terminal originTerminal() {
+		return maritimeCircuit.originTerminal();
+	}
+
 }

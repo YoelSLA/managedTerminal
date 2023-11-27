@@ -1,4 +1,4 @@
-package filteredSearch.criteria;
+package search.selection.selectionDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -13,51 +13,55 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import maritimeCircuit.MaritimeCircuit;
-import search.criteria.ArrivalDate;
+import search.criteria.Criteria;
 import stretch.Stretch;
 import terminal.ManagedTerminal;
 import terminal.Terminal;
 import trip.Trip;
 
-class ArrivalDateTest {
+class DepartureDateTest {
 
+	private LocalDateTime dateForSearch;
+// -------------------------------------------------------------
 	private ManagedTerminal buenosAires;
-//-------------------------------------------------------------
+// -------------------------------------------------------------
 	private MaritimeCircuit maritimeCircuitOne;
 	private MaritimeCircuit maritimeCircuitTwo;
-//-------------------------------------------------------------
+// -------------------------------------------------------------
 	private Stretch buenosAiresSantiago;
 	private Stretch santiagoQuito;
 	private Stretch quitoLima;
 	private Stretch limaCaracas;
 	private Stretch caracasBuenosAires;
 	private Stretch santiagoLima;
-//-------------------------------------------------------------
+// -------------------------------------------------------------
 	private Terminal santiago;
 	private Terminal quito;
 	private Terminal lima;
 	private Terminal caracas;
-//-------------------------------------------------------------
+// -------------------------------------------------------------
 	private Trip tripOne;
 	private Trip tripTwo;
-//-------------------------------------------------------------
-	private ArrivalDate arrivalDate; // SUT
+// -------------------------------------------------------------
+	private DepartureDate departureDate; // SUT
 
 	@BeforeEach
 	void setUp() {
 		// MANAGED TERMINAL
 		buenosAires = mock(ManagedTerminal.class);
-//-------------------------------------------------------------
+		// -------------------------------------------------------------
 		// MARITIME CIRCUIT
 		maritimeCircuitOne = mock(MaritimeCircuit.class);
 		when(maritimeCircuitOne.getStretchs()).thenReturn(
 				Arrays.asList(buenosAiresSantiago, santiagoQuito, quitoLima, limaCaracas, caracasBuenosAires));
+		when(maritimeCircuitOne.originTerminal()).thenReturn(buenosAires);
 
 		maritimeCircuitTwo = mock(MaritimeCircuit.class);
 		when(maritimeCircuitTwo.getStretchs())
 				.thenReturn(Arrays.asList(buenosAiresSantiago, santiagoLima, limaCaracas, caracasBuenosAires));
+		when(maritimeCircuitTwo.originTerminal()).thenReturn(buenosAires);
 		when(maritimeCircuitOne.calculateTimeBetween(buenosAires, quito)).thenReturn(8);
-//-------------------------------------------------------------
+		// -------------------------------------------------------------
 		// STRETCH
 		buenosAiresSantiago = mock(Stretch.class);
 		when(buenosAiresSantiago.getOrigin()).thenReturn(buenosAires);
@@ -88,38 +92,58 @@ class ArrivalDateTest {
 		when(santiagoLima.getOrigin()).thenReturn(buenosAires);
 		when(santiagoLima.getDestiny()).thenReturn(santiago);
 		when(santiagoLima.getTime()).thenReturn(Duration.ofHours(3));
-//-------------------------------------------------------------	
+		// -------------------------------------------------------------
 		// TERMINAL
 		santiago = mock(Terminal.class);
 		quito = mock(Terminal.class);
 		lima = mock(Terminal.class);
 		caracas = mock(Terminal.class);
-//-------------------------------------------------------------
+		// -------------------------------------------------------------
 		// TRIP
 		tripOne = mock(Trip.class);
+		LocalDateTime startDateTripOne = LocalDateTime.of(2023, 11, 26, 20, 0);
+		when(tripOne.getStartDate()).thenReturn(startDateTripOne);
 		when(tripOne.getMaritimeCircuit()).thenReturn(maritimeCircuitOne);
-		when(tripOne.getStartDate()).thenReturn(LocalDateTime.of(2023, 11, 26, 12, 0));
-		when(tripOne.dateArrivedToDestiny(quito)).thenReturn(LocalDateTime.of(2023, 11, 26, 20, 0));
-		when(tripOne.hasADestinyTerminal(quito)).thenReturn(true);
+		when(tripOne.originTerminal()).thenReturn(buenosAires);
 
 		tripTwo = mock(Trip.class);
+		LocalDateTime startDateTripTwo = LocalDateTime.of(2023, 10, 1, 12, 0);
+		when(tripTwo.getStartDate()).thenReturn(startDateTripTwo);
 		when(tripTwo.getMaritimeCircuit()).thenReturn(maritimeCircuitTwo);
-		when(tripTwo.getStartDate()).thenReturn(LocalDateTime.of(2023, 12, 1, 12, 0));
-		when(tripTwo.dateArrivedToDestiny(quito)).thenReturn(LocalDateTime.of(2023, 12, 3, 12, 0));
-		when(tripTwo.hasADestinyTerminal(quito)).thenReturn(false);
-//-------------------------------------------------------------
-		arrivalDate = new ArrivalDate(LocalDateTime.of(2023, 11, 26, 20, 0), quito);
+		when(tripTwo.originTerminal()).thenReturn(buenosAires);
+		// -------------------------------------------------------------
+		dateForSearch = startDateTripOne;
+		departureDate = new DepartureDate(Criteria.EQUALS, dateForSearch, buenosAires);
 	}
 
 	@Test
-	void testAArrivalDateIsCreated() {
-		assertEquals(LocalDateTime.of(2023, 11, 26, 20, 0), arrivalDate.getArrivalDate());
-		assertEquals(quito, arrivalDate.getDestiny());
+	void testADepartureDateIsCreated() {
+		assertEquals(Criteria.EQUALS, departureDate.getCriteria());
+		assertEquals(dateForSearch, departureDate.getDateForSearch());
+		assertEquals(buenosAires, departureDate.getOrigin());
 	}
 
 	@Test
-	void testArrivalDate() {
-		assertEquals(List.of(tripOne), arrivalDate.filterTrips(List.of(tripOne, tripTwo)));
+	void testTheDateIsTheSameAsTheOneYouAreLookingFor() {
+		assertEquals(List.of(tripOne), departureDate.filterTrips(List.of(tripOne, tripTwo)));
 	}
 
+	@Test
+	void testTheDateIsLessThanWhatYouAreLookingFor() {
+		// Exercise
+		departureDate.setCriteria(Criteria.LESS_THAN);
+		when(tripOne.getStartDate()).thenReturn(LocalDateTime.of(2023, 11, 20, 20, 0));
+		when(tripTwo.getStartDate()).thenReturn(LocalDateTime.of(2023, 12, 01, 10, 0));
+		// Assert
+		assertEquals(List.of(tripOne), departureDate.filterTrips(List.of(tripOne, tripTwo)));
+	}
+
+	@Test
+	void testTheDateIsGreatherThanWhatYouAreLookingFor() {
+		// Exercise
+		departureDate.setCriteria(Criteria.GREATHER_THAN);
+		when(tripOne.getStartDate()).thenReturn(LocalDateTime.of(2023, 11, 30, 20, 0));
+		// Assert
+		assertEquals(List.of(tripOne), departureDate.filterTrips(List.of(tripOne, tripTwo)));
+	}
 }
