@@ -37,7 +37,9 @@ public abstract class Routing {
 				circuit -> circuit.getStretchs().stream().anyMatch(stretch -> stretch.getDestiny().equals(destiny)))) {
 			throw new RuntimeException("The destiny must be in the maritime circuits.");
 		}
-
 	}
+	
+	protected abstract Double calculateRoutingBetween(ManagedTerminal origin, Terminal destiny,
+			MaritimeCircuit maritimeCircuit);
 
 }
