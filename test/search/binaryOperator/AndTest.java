@@ -120,10 +120,14 @@ class AndTest {
 	}
 
 	@Test
-	void x() {
-		System.out.println("LEFT" + leftClause.filterTrips(List.of(tripOne, tripTwo)));
-		System.out.println("RIGHT" + rightClause.filterTrips(List.of(tripOne, tripTwo)));
+	void testAAndIsCreated() {
+		assertEquals(leftClause, and.getLeftClause());
+		assertEquals(rightClause, and.getRightClause());
 
+	}
+
+	@Test
+	void testAnd() {
 		assertEquals(List.of(tripOne, tripTwo), and.filterTrips(List.of(tripOne, tripTwo)));
 
 	}

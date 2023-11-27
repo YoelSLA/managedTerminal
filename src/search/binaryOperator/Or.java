@@ -1,27 +1,24 @@
 package search.binaryOperator;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
+import search.Search;
 import trip.Trip;
 
 public class Or extends BinaryOperator {
 
-	public Or(BinaryOperator leftClause, BinaryOperator rightClause) {
+	public Or(Search leftClause, Search rightClause) {
 		super(leftClause, rightClause);
 	}
 
 	@Override
 	public List<Trip> filterTrips(List<Trip> trips) {
-		List<Trip> newTripsFiltered = new ArrayList<>();
+		List<Trip> leftClause = this.getLeftClause().filterTrips(trips);
+		List<Trip> rightClause = this.getRightClause().filterTrips(trips);
 
-		List<Trip> firstFiltered = this.getLeftClause().filterTrips(trips);
-		newTripsFiltered.addAll(firstFiltered);
+		return Stream.concat(leftClause.stream(), rightClause.stream()).distinct().toList();
 
-		List<Trip> secondFiltered = this.getRightClause().filterTrips(trips);
-		newTripsFiltered.addAll(secondFiltered);
-
-		return newTripsFiltered;
 	}
 
 }

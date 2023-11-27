@@ -11,9 +11,9 @@ public class Stretch {
 	private Double price;
 	private Duration time;
 
-	public Stretch(Terminal destiny, Terminal origin, Double price, Duration time) {
-		this.destiny = destiny;
+	public Stretch(Terminal origin, Terminal destiny, Double price, Duration time) {
 		this.origin = origin;
+		this.destiny = destiny;
 		this.price = price;
 		this.time = time;
 	}
@@ -34,7 +34,4 @@ public class Stretch {
 		return time;
 	}
 
-	public boolean isItHasATerminal(Terminal terminal) {
-		return destiny.equals(terminal) || getOrigin().equals(terminal);
-	}
 }
