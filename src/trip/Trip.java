@@ -2,7 +2,6 @@ package trip;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.stream.Collectors;
 
 import maritimeCircuit.MaritimeCircuit;
 import ship.Ship;
@@ -57,7 +56,7 @@ public class Trip {
 
 	public boolean hasADestinyTerminal(Terminal destiny) {
 		System.out.println("Terminals in Maritime Circuit: "
-				+ maritimeCircuit.getStretchs().stream().map(s -> s.getDestiny()).collect(Collectors.toList()));
+				+ maritimeCircuit.getStretchs().stream().map(s -> s.getDestiny()).toList());
 		System.out.println("Destiny1: " + destiny); // Verifica que el terminal de destino sea el correcto
 		return maritimeCircuit.hasADestinyTerminal(destiny);
 
