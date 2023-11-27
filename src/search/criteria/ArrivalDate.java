@@ -24,35 +24,10 @@ public class ArrivalDate implements Criteria {
 
 	@Override
 	public List<Trip> filterTrips(List<Trip> trips) {
-		System.out.println("ENTREEEE"); // Mensaje de depuración para verificar si el método se ejecuta correctamente
-		System.out.println("destiny: " + destiny); // Mensaje de depuración para verificar el valor de destiny
-		System.out.println("fechaArrival: " + arrivalDate); // Mensaje de depuración para verificar el valor de
-															// arrivalDate
+		return trips.stream()
+				.filter(t -> t.hasADestinyTerminal(destiny) && t.dateArrivedToDestiny(destiny).equals(arrivalDate))
+				.toList();
 
-		// Filtrar las travesías basándose en la condición
-		List<Trip> filteredTrips = trips.stream().filter(trip -> {
-			// Mensaje de depuración para verificar si la travesía cumple con la condición
-			System.out.println("Checking trip: " + trip);
-
-			// Verificar si la travesía tiene el destino y la fecha de llegada correctos
-			boolean hasCorrectDestiny = trip.hasADestinyTerminal(destiny);
-			System.out.println("destiny inside: " + destiny);
-			System.out.println("Checking hasCorrect: " + trip.hasADestinyTerminal(destiny));
-			boolean hasCorrectArrivalDate = trip.dateArrivedToDestiny(destiny).equals(arrivalDate);
-
-			// Mensajes de depuración para verificar los resultados de las condiciones
-			// individuales
-			System.out.println("Has correct destiny: " + hasCorrectDestiny);
-			System.out.println("Has correct arrival date: " + hasCorrectArrivalDate);
-
-			// Devolver true solo si ambas condiciones son verdaderas
-			return hasCorrectDestiny && hasCorrectArrivalDate;
-		}).toList();
-
-		// Mensaje de depuración para verificar las travesías filtradas
-		System.out.println("Filtered trips: " + filteredTrips);
-
-		return filteredTrips;
 	}
 
 	public LocalDateTime getArrivalDate() {
