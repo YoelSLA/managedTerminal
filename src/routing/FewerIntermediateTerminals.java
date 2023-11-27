@@ -16,16 +16,13 @@ public class FewerIntermediateTerminals extends Routing {
 		validateMaritimeCircuits(maritimeCircuits);
 		validateTerminalDestinyIn(destiny, maritimeCircuits);
 		Optional<MaritimeCircuit> circuitWithDestiny = maritimeCircuits.stream()
-				.min((circuit1, circuit2) -> Integer.compare(
-						calculateRoutingBetween(origin, destiny, circuit1).intValue(),
-						calculateRoutingBetween(origin, destiny, circuit2).intValue()));
+				.min((circuit1, circuit2) -> Integer.compare(calculateRouting(origin, destiny, circuit1).intValue(),
+						calculateRouting(origin, destiny, circuit2).intValue()));
 		return circuitWithDestiny.get();
-
 	}
 
-	protected Double calculateRoutingBetween(ManagedTerminal origin, Terminal destiny, MaritimeCircuit maritimeCircuit) {
-		return (double) Math.abs(super.getPositionOfDestinyInCircuit(origin, maritimeCircuit)
-				- super.getPositionOfDestinyInCircuit(destiny, maritimeCircuit));
+	protected Double calculateRouting(ManagedTerminal origin, Terminal destiny, MaritimeCircuit maritimeCircuit) {
+		return (double) Math.abs(maritimeCircuit.getPositionOf(origin) - maritimeCircuit.getPositionOf(destiny));
 	}
 
 }

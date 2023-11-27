@@ -162,7 +162,7 @@ class ManagedTerminalTest {
 		assertEquals(0, buenosAires.getImportOrders().size());
 		assertEquals(ferFewerIntermediateTerminals, buenosAires.getRouting());
 		assertEquals(0, buenosAires.getShippers().size());
-		assertEquals(0, buenosAires.getShippingCompanies().size());
+		assertEquals(0, buenosAires.getShippingLines().size());
 		assertEquals(0, buenosAires.getTruckTransportCompanies().size());
 		assertEquals(0, buenosAires.getTurns().size());
 	}
@@ -191,7 +191,7 @@ class ManagedTerminalTest {
 		// Exercise
 		buenosAires.registerShippingCompany(apmMaersk);
 		// Assert
-		assertEquals(1, buenosAires.getShippingCompanies().size());
+		assertEquals(1, buenosAires.getShippingLines().size());
 	}
 
 	@Test

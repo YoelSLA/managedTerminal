@@ -16,7 +16,7 @@ import terminal.Terminal;
 //maritimeCircuitOne 
 //(Buenos Aires - Santiago (100) | Santiago - Quito (200) | Quito - Lima (300) | Lima - Caracas (400) | Caracas - Buenos Aires (500) ) -> 4 intemerdias
 //maritimeCircuitTwo
-//(Buenos Aires - Santiago (100) | Santiago - Lima | Lima - Caracas (400) | Caracas -Buenos Aires (500) ) -> 3 intemerdias
+//(Buenos Aires - Santiago (100) | Santiago - Lima (1000) | Lima - Caracas (400) | Caracas -Buenos Aires (500) ) -> 3 intemerdias
 
 class LowerPriceTest extends RoutingTest {
 
@@ -31,14 +31,12 @@ class LowerPriceTest extends RoutingTest {
 	@Override
 	protected void configureMocks() {
 		super.configureMocks();
-
-		// MARITIME CIRCUIT
 		when(buenosAiresSantiago.getPrice()).thenReturn(100.0);
 		when(santiagoQuito.getPrice()).thenReturn(200.0);
 		when(quitoLima.getPrice()).thenReturn(300.0);
 		when(limaCaracas.getPrice()).thenReturn(400.0);
 		when(caracasBuenosAires.getPrice()).thenReturn(500.0);
-		when(caracasBuenosAires.getPrice()).thenReturn(1000.0);
+		when(santiagoLima.getPrice()).thenReturn(1000.0);
 	}
 
 	@Test

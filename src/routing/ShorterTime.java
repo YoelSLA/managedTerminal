@@ -16,15 +16,14 @@ public class ShorterTime extends Routing {
 		validateMaritimeCircuits(maritimeCircuits);
 		validateTerminalDestinyIn(destiny, maritimeCircuits);
 		return maritimeCircuits.stream()
-				.min(Comparator.comparingDouble(circuit -> calculateRoutingBetween(origin, destiny, circuit)))
+				.min(Comparator.comparingDouble(circuit -> calculateRouting(origin, destiny, circuit)))
 				.orElse(maritimeCircuits.get(0));
 	}
 
-	protected Double calculateRoutingBetween(ManagedTerminal origin, Terminal destiny, MaritimeCircuit maritimeCircuit) {
+	protected Double calculateRouting(ManagedTerminal origin, Terminal destiny, MaritimeCircuit maritimeCircuit) {
 		return maritimeCircuit.getStretchs()
-				.subList(super.getPositionOfOriginInCircuit(origin, maritimeCircuit),
-						super.getPositionOfDestinyInCircuit(destiny, maritimeCircuit))
-				.stream().mapToDouble(s -> s.getTime().toHours()).sum();
+				.subList(maritimeCircuit.getPositionOf(origin), maritimeCircuit.getPositionOf(destiny)).stream()
+				.mapToDouble(s -> s.getTime().toSeconds()).sum();
 
 	}
 }

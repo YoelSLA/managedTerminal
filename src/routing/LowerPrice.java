@@ -17,15 +17,14 @@ public class LowerPrice extends Routing {
 		validateMaritimeCircuits(maritimeCircuits);
 		validateTerminalDestinyIn(destiny, maritimeCircuits);
 		return maritimeCircuits.stream()
-				.filter(circuit -> calculateRoutingBetween(origin, destiny, circuit) < circuit.getPrice())
-				.min(Comparator.comparingDouble(circuit -> calculateRoutingBetween(origin, destiny, circuit)))
+				.filter(circuit -> calculateRouting(origin, destiny, circuit) < circuit.getPrice())
+				.min(Comparator.comparingDouble(circuit -> calculateRouting(origin, destiny, circuit)))
 				.orElse(maritimeCircuits.get(0));
 	}
 
-	protected Double calculateRoutingBetween(ManagedTerminal origin, Terminal destiny,
-			MaritimeCircuit maritimeCircuit) {
-		return maritimeCircuit.getStretchs().subList(super.getPositionOfOriginInCircuit(
-				origin, maritimeCircuit), super.getPositionOfDestinyInCircuit(destiny, maritimeCircuit)).stream()
+	protected Double calculateRouting(ManagedTerminal origin, Terminal destiny, MaritimeCircuit maritimeCircuit) {
+		return maritimeCircuit.getStretchs()
+				.subList(maritimeCircuit.getPositionOf(origin), maritimeCircuit.getPositionOf(destiny)).stream()
 				.mapToDouble(Stretch::getPrice).sum();
 
 	}

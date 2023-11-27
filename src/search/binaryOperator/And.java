@@ -20,9 +20,11 @@ public class And extends BinaryOperator {
 		newTripsFiltered.addAll(firstFiltered);
 
 		List<Trip> secondFiltered = this.getRightClause().filterTrips(trips);
-		newTripsFiltered.retainAll(secondFiltered);
 
-		return newTripsFiltered;
+		// Crear una nueva lista para almacenar la intersección
+		List<Trip> intersection = new ArrayList<>(newTripsFiltered);
+		intersection.retainAll(secondFiltered);
+
+		return intersection;
 	}
-
 }

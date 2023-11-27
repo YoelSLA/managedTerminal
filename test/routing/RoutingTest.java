@@ -31,39 +31,28 @@ class RoutingTest {
 	}
 
 	protected void configureMocks() {
-		// TERMINAL
 		buenosAires = mock(ManagedTerminal.class);
 		Terminal santiago = mock(Terminal.class);
 		Terminal quito = mock(Terminal.class);
 		Terminal lima = mock(Terminal.class);
 		caracas = mock(Terminal.class);
-
-		// STRETCH
-		when(buenosAiresSantiago.getOrigin()).thenReturn(buenosAires);
-		when(buenosAiresSantiago.getDestiny()).thenReturn(santiago);
-
-		when(santiagoQuito.getOrigin()).thenReturn(santiago);
-		when(santiagoQuito.getDestiny()).thenReturn(quito);
-
-		when(quitoLima.getOrigin()).thenReturn(quito);
-		when(quitoLima.getDestiny()).thenReturn(lima);
-
-		when(limaCaracas.getOrigin()).thenReturn(lima);
-		when(limaCaracas.getDestiny()).thenReturn(caracas);
-
-		when(caracasBuenosAires.getOrigin()).thenReturn(caracas);
-		when(caracasBuenosAires.getDestiny()).thenReturn(buenosAires);
-
-		when(santiagoLima.getOrigin()).thenReturn(santiago);
-		when(santiagoLima.getDestiny()).thenReturn(lima);
-
-		// MARITIM CIRCUIT
 		maritimeCircuitOne = mock(MaritimeCircuit.class);
 		maritimeCircuitTwo = mock(MaritimeCircuit.class);
 
+		when(buenosAiresSantiago.getOrigin()).thenReturn(buenosAires);
+		when(buenosAiresSantiago.getDestiny()).thenReturn(santiago);
+		when(santiagoQuito.getOrigin()).thenReturn(santiago);
+		when(santiagoQuito.getDestiny()).thenReturn(quito);
+		when(quitoLima.getOrigin()).thenReturn(quito);
+		when(quitoLima.getDestiny()).thenReturn(lima);
+		when(limaCaracas.getOrigin()).thenReturn(lima);
+		when(limaCaracas.getDestiny()).thenReturn(caracas);
+		when(caracasBuenosAires.getOrigin()).thenReturn(caracas);
+		when(caracasBuenosAires.getDestiny()).thenReturn(buenosAires);
+		when(santiagoLima.getOrigin()).thenReturn(buenosAires);
+		when(santiagoLima.getDestiny()).thenReturn(buenosAires);
 		when(maritimeCircuitOne.getStretchs()).thenReturn(
 				Arrays.asList(buenosAiresSantiago, santiagoQuito, quitoLima, limaCaracas, caracasBuenosAires));
-
 		when(maritimeCircuitTwo.getStretchs())
 				.thenReturn(Arrays.asList(buenosAiresSantiago, santiagoLima, limaCaracas, caracasBuenosAires));
 	}

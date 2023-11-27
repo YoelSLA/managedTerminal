@@ -2,6 +2,7 @@ package maritimeCircuit;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import stretch.Stretch;
@@ -89,6 +90,11 @@ public class MaritimeCircuit {
 
 	public Terminal originTerminal() {
 		return getStretchs().get(0).getOrigin();
+	}
+
+	public Integer getPositionOf(Terminal terminal) {
+		Optional<Stretch> stretch = stretchs.stream().filter(s -> s.getOrigin().equals(terminal)).findFirst();
+		return stretch.map(s -> stretchs.indexOf(s)).orElse(-1);
 	}
 
 }

@@ -15,6 +15,8 @@ import order.ImportOrder;
 import orderValidation.ExportValidation;
 import routing.Routing;
 import shippingLine.ShippingLine;
+import tracker.Tracker;
+import trip.Trip;
 import truck.Truck;
 import truckTransportCompany.TruckTransportCompany;
 import turn.Turn;
@@ -26,7 +28,8 @@ public class ManagedTerminal extends Terminal {
 	private List<ImportOrder> importOrders;
 	private Routing routing;
 	private List<Shipper> shippers;
-	private List<ShippingLine> shippingCompanies;
+	private List<ShippingLine> shippingLines;
+	private Tracker tracker;
 	private List<TruckTransportCompany> truckTransportCompanies;
 	private List<Turn> turns;
 
@@ -37,7 +40,8 @@ public class ManagedTerminal extends Terminal {
 		this.importOrders = new ArrayList<ImportOrder>();
 		this.routing = routing;
 		this.shippers = new ArrayList<Shipper>();
-		this.shippingCompanies = new ArrayList<ShippingLine>();
+		this.shippingLines = new ArrayList<ShippingLine>();
+		this.tracker = new Tracker();
 		this.truckTransportCompanies = new ArrayList<TruckTransportCompany>();
 		this.turns = new ArrayList<Turn>();
 	}
@@ -62,8 +66,12 @@ public class ManagedTerminal extends Terminal {
 		return shippers;
 	}
 
-	public List<ShippingLine> getShippingCompanies() {
-		return shippingCompanies;
+	public List<ShippingLine> getShippingLines() {
+		return shippingLines;
+	}
+
+	public Tracker getTracker() {
+		return tracker;
 	}
 
 	public List<TruckTransportCompany> getTruckTransportCompanies() {
@@ -72,6 +80,10 @@ public class ManagedTerminal extends Terminal {
 
 	public List<Turn> getTurns() {
 		return turns;
+	}
+
+	public List<Trip> searchTrips() {
+		return tracker.searchTrips(allTripsInAllShippingLines());
 	}
 
 	public void hireExportService(ExportOrder exportOrder) {
@@ -122,7 +134,7 @@ public class ManagedTerminal extends Terminal {
 		// Al registrar una naviera en la terminal gestionada, solamente interesa de la
 		// naviera los circuitos donde incluyan a la terminal gestionada (sea como
 		// destino o origen en algun tramo).
-		shippingCompanies.add(shippingCompany);
+		shippingLines.add(shippingCompany);
 	}
 
 	public void registerTruckTransportCompany(TruckTransportCompany truckTransportCompany) {
@@ -137,6 +149,10 @@ public class ManagedTerminal extends Terminal {
 	private List<Truck> registredTrucks() {
 		return truckTransportCompanies.stream().flatMap(t -> t.getTrucks().stream()).distinct()
 				.collect(Collectors.toList());
+	}
+
+	private List<Trip> allTripsInAllShippingLines() {
+		return shippingLines.stream().flatMap(s -> s.getTrips().stream().distinct()).toList();
 	}
 
 }
