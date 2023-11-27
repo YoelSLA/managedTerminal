@@ -31,7 +31,7 @@ public class ManagedTerminal extends Terminal {
 	private List<Turn> turns;
 
 	public ManagedTerminal(GeographicalPosition geographicalPosition, Routing routing) {
-		super(geographicalPosition);
+		super(geographicalPosition, "Puerto de Buenos Aires");
 		this.consignees = new ArrayList<Consignee>();
 		this.exportOrders = new ArrayList<ExportOrder>();
 		this.importOrders = new ArrayList<ImportOrder>();

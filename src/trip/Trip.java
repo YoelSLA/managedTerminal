@@ -64,9 +64,14 @@ public class Trip {
 	}
 
 	public LocalDateTime dateArrivedToDestiny(Terminal destiny) {
-		return startDate.plus(
-				maritimeCircuit.calculateTimeBetween(maritimeCircuit.getStretchs().get(0).getOrigin(), destiny),
-				ChronoUnit.HOURS);
+
+		System.out
+				.println(maritimeCircuit.getStretchs().stream().map(s -> s.getOrigin()).map(s -> s.getName()).toList());
+		System.out.println("OriginMetodo: " + maritimeCircuit.originTerminal());
+		Integer durationOfHours = maritimeCircuit.calculateTimeBetween(maritimeCircuit.originTerminal(), destiny);
+		System.out.println(durationOfHours);
+
+		return startDate.plus(durationOfHours, ChronoUnit.HOURS);
 	}
 
 }

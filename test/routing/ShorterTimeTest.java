@@ -5,7 +5,6 @@ import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.time.Duration;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -31,12 +30,12 @@ class ShorterTimeTest extends RoutingTest {
 	@Override
 	protected void configureMocks() {
 		super.configureMocks();
-		when(buenosAiresSantiago.getTime()).thenReturn(Duration.ofHours(3));
-		when(santiagoQuito.getTime()).thenReturn(Duration.ofHours(5));
-		when(quitoLima.getTime()).thenReturn(Duration.ofHours(7));
-		when(limaCaracas.getTime()).thenReturn(Duration.ofHours(9));
-		when(caracasBuenosAires.getTime()).thenReturn(Duration.ofHours(7));
-		when(santiagoLima.getTime()).thenReturn(Duration.ofHours(3));
+		when(buenosAiresSantiago.getTime()).thenReturn(3);
+		when(santiagoQuito.getTime()).thenReturn(5);
+		when(quitoLima.getTime()).thenReturn(7);
+		when(limaCaracas.getTime()).thenReturn(9);
+		when(caracasBuenosAires.getTime()).thenReturn(7);
+		when(santiagoLima.getTime()).thenReturn(3);
 	}
 
 	@Test

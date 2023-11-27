@@ -1,12 +1,15 @@
 package maritimeCircuit;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import java.time.Duration;
 import java.util.List;
 
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import stretch.Stretch;
 import terminal.ManagedTerminal;
@@ -14,61 +17,76 @@ import terminal.Terminal;
 
 class MaritimeCircuitTest {
 
-	private MaritimeCircuit maritimeCircuit; // SUT
-	private Stretch buenosAiresMontevideo; // DOC
-	private Stretch montevideoRioDeJaneiro; // DOC
-	private Stretch rioDeJaneiroBuenosAires; // DOC
-	private ManagedTerminal terminalBuenosAires; // DOC
-	private Terminal terminalMontevideo; // DOC
-	private Terminal terminalRioDeJaneiro; // DOC
+	ManagedTerminal buenosAires = mock(ManagedTerminal.class);
+	Terminal quito = mock(Terminal.class);
+	private Stretch buenosAiresSantiago;
+	private Stretch santiagoQuito;
+	private Stretch quitoLima;
+	private Stretch limaCaracas;
+	private Stretch caracasBuenosAires;
+	private MaritimeCircuit maritimeCircuit;
 
 	@BeforeEach
 	void setUp() {
-		buenosAiresMontevideo = mock(Stretch.class);
-		montevideoRioDeJaneiro = mock(Stretch.class);
-		rioDeJaneiroBuenosAires = mock(Stretch.class);
-		terminalBuenosAires = mock(ManagedTerminal.class);
-		terminalMontevideo = mock(Terminal.class);
-		terminalRioDeJaneiro = mock(Terminal.class);
+		// TERMINAL
+		Terminal santiago = mock(Terminal.class);
+		Terminal lima = mock(Terminal.class);
+		Terminal caracas = mock(Terminal.class);
 
+		when(buenosAires.getName()).thenReturn("Puerto de Buenos Aires");
+		when(santiago.getName()).thenReturn("Puerto de Santiago");
+		when(quito.getName()).thenReturn("Puerto de Quito");
+		when(lima.getName()).thenReturn("Puerto de Lima");
+		when(caracas.getName()).thenReturn("Puerto de Caracas");
+
+		// STRETCH
+		buenosAiresSantiago = mock(Stretch.class);
+		santiagoQuito = mock(Stretch.class);
+		quitoLima = mock(Stretch.class);
+		limaCaracas = mock(Stretch.class);
+		caracasBuenosAires = mock(Stretch.class);
+
+		when(buenosAiresSantiago.getOrigin()).thenReturn(buenosAires);
+		when(buenosAiresSantiago.getDestiny()).thenReturn(santiago);
+		when(buenosAiresSantiago.getTime()).thenReturn(Duration.ofHours(3));
+
+		when(santiagoQuito.getOrigin()).thenReturn(santiago);
+		when(santiagoQuito.getDestiny()).thenReturn(quito);
+		when(santiagoQuito.getTime()).thenReturn(Duration.ofHours(5));
+
+		when(quitoLima.getOrigin()).thenReturn(quito);
+		when(quitoLima.getDestiny()).thenReturn(lima);
+
+		when(limaCaracas.getOrigin()).thenReturn(lima);
+		when(limaCaracas.getDestiny()).thenReturn(caracas);
+
+		when(caracasBuenosAires.getOrigin()).thenReturn(caracas);
+		when(caracasBuenosAires.getDestiny()).thenReturn(buenosAires);
+
+		// MARITIME CIRCUIT
 		maritimeCircuit = new MaritimeCircuit(
-				List.of(buenosAiresMontevideo, montevideoRioDeJaneiro, rioDeJaneiroBuenosAires));
+				List.of(buenosAiresSantiago, santiagoQuito, quitoLima, limaCaracas, caracasBuenosAires));
 	}
 
 	@Test
-	void testAMaritimeCircuitHasATwoSections() {
-		assertTrue(maritimeCircuit.areTheTerminalsThere(terminalBuenosAires, terminalMontevideo));
+	void testAMaritimeCircuitIsCreated() {
+		assertEquals(List.of(buenosAiresSantiago, santiagoQuito, quitoLima, limaCaracas, caracasBuenosAires),
+				maritimeCircuit.getStretchs());
 	}
-//
-//	@Test
-//	void testAMaritimeCircuitCalculatesTheTotalPriceBetweenAllItsSections() {
-//		assertEquals(70.00, maritimeCircuit.getPrice());
-//	}
-//
-//	@Test
-//	void AMaritimeCircuitKnowsIfItHasACertainTerminalInItsSections() {
-//		assertTrue(maritimeCircuit.itHasASectionWhereItIs(terminalBuenosAires));
-//	}
-//
-//	@Test
-//	void AMaritimeCircuitKnowsIfItHasNotACertainTerminalInItsSections() {
-//		assertFalse(maritimeCircuit.itHasASectionWhereItIs(terminalRioDeJaneiro));
-//	}
 
-//	@Test
-//	void hola2() {
-//		// Set Up
-//		when(terminalBuenosAires.getName()).thenReturn("Puerto de Buenos Aires");
-//		when(terminalMontevideo.getName()).thenReturn("Puerto de Montevideo");
-//		when(terminalRioDeJaneiro.getName()).thenReturn("Puerto de Rio de Janeiro");
-//		when(buenosAiresMontevideo.getOrigin()).thenReturn(terminalBuenosAires);
-//		when(buenosAiresMontevideo.getDestiny()).thenReturn(terminalMontevideo);
-//		when(montevideoRioDeJaneiro.getOrigin()).thenReturn(terminalMontevideo);
-//		when(montevideoRioDeJaneiro.getDestiny()).thenReturn(terminalRioDeJaneiro);
-//		when(rioDeJaneiroBuenosAires.getOrigin()).thenReturn(terminalRioDeJaneiro);
-//		when(rioDeJaneiroBuenosAires.getDestiny()).thenReturn(terminalBuenosAires);
-//		// Assert
-//		assertTrue(maritimeCircuit.exists(terminalBuenosAires));
-//	}
+	@Test
+	void testAMaritimeCircuitHasACertainTerminal() {
 
+		assertTrue(maritimeCircuit.hasADestinyTerminal(quito));
+	}
+
+	@Test
+	void testNumberOfHoursBetweenTwoTerminals() {
+		assertEquals(8, maritimeCircuit.calculateTimeBetween(buenosAires, quito));
+	}
+
+	@Test
+	void testOriginTerminal() {
+		assertEquals(buenosAires, maritimeCircuit.originTerminal());
+	}
 }

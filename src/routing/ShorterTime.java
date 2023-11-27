@@ -25,7 +25,7 @@ public class ShorterTime extends Routing {
 		final Integer destinyPosition = getPositionOfDestinyInCircuit(destiny, maritimeCircuit);
 
 		return maritimeCircuit.getStretchs().subList(originPosition, destinyPosition).stream()
-				.mapToDouble(s -> s.getTime().toSeconds()).sum();
+				.mapToDouble(s -> s.getTime().toHours()).sum();
 
 	}
 }

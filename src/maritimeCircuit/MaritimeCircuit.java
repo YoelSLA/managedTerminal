@@ -1,7 +1,8 @@
 package maritimeCircuit;
 
+import java.time.Duration;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Stream;
 
 import stretch.Stretch;
 import terminal.Terminal;
@@ -22,18 +23,6 @@ public class MaritimeCircuit {
 		return stretchs;
 	}
 
-	private Optional<Integer> getPositionOfOriginInCircuit(Terminal origin) {
-		int index = getStretchs()
-				.indexOf(getStretchs().stream().filter(s -> s.getOrigin().equals(origin)).findFirst().orElse(null));
-		return (index != -1) ? Optional.of(index) : Optional.empty();
-	}
-
-	private Optional<Integer> getPositionOfDestinyInCircuit(Terminal destiny) {
-		int index = getStretchs()
-				.indexOf(getStretchs().stream().filter(s -> s.getDestiny().equals(destiny)).findFirst().orElse(null));
-		return (index != -1) ? Optional.of(index) : Optional.empty();
-	}
-
 //	public boolean areTheTerminalsThere(Terminal origin, Terminal destiny) {
 //		return isTheOriginTerminal(origin) && isTheDestinyTerminal(destiny)
 //				&& isTheOriginTerminalBeforeDestinationTerminal(origin, destiny);
@@ -52,44 +41,54 @@ public class MaritimeCircuit {
 //	}
 
 	public boolean hasADestinyTerminal(Terminal destiny) {
-		System.out.println("Checking for destiny terminal: " + destiny);
 		return getStretchs().stream().anyMatch(s -> {
 			boolean result = s.getDestiny().equals(destiny);
-			System.out.println("Stretch: " + s + ", Result: " + result);
 			return result;
 		});
 	}
 
 	public Integer calculateTimeBetween(Terminal origin, Terminal destiny) {
-		System.out.println("origin: " + origin);
-		System.out.println("destiny: " + destiny);
 
-		final Optional<Integer> originPosition = getPositionOfOriginInCircuit(origin);
-		final Optional<Integer> destinyPosition = getPositionOfDestinyInCircuit(destiny);
+		Integer originPosition = getPositionOfOrigin(origin);
+		Integer destinyPosition = getPositionOfDestiny(destiny);
 
-		System.out.println("PositionOrigin: " + originPosition);
-		System.out.println("PositionDestiny: " + destinyPosition);
+		// Primero se particiona la lista de tramos entre los índices, y luego se suma
+		// el tiempo entre todos.
+		long totalNanos = getStretchs().subList(originPosition, destinyPosition).stream()
+				.mapToLong(s -> s.getTime().toNanos()).sum();
 
-		int originPositionValue = originPosition.orElse(-1);
-		int destinyPositionValue = destinyPosition.orElse(-1);
+		// Convierte los nanosegundos a horas y redondea al entero más cercano.
+		int totalHours = (int) Math.round(totalNanos / (double) Duration.ofHours(1).toNanos());
 
-		if (originPositionValue != -1 && destinyPositionValue != -1) {
-			return getStretchs().subList(originPositionValue, destinyPositionValue).stream()
-					.mapToInt(s -> (int) s.getTime().toSeconds()).sum();
-		} else {
-			// Manejar el caso en el que uno o ambos índices no son válidos.
-			return -1; // O cualquier valor que desees usar para indicar que la operación no fue
-						// exitosa
-		}
+		return totalHours;
 	}
 
-//	private Double calculateTimeBetween(ManagedTerminal origin, Terminal destiny) {
-//		final Optional<Integer> originPosition = getPositionOfOriginInCircuit(origin);
-//		final Optional<Integer> destinyPosition = getPositionOfDestinyInCircuit(destiny);
-//
-//		return getStretchs().subList(originPosition, destinyPosition).stream().mapToDouble(s -> s.getTime().toSeconds())
-//				.sum();
-//
-//	}
+	private Integer getPositionOfDestiny(Terminal destiny) {
+
+		// Se recorre todas los tramos, y se filtran solamente aquellos que tienen la
+		// terminal origen.
+		Stream<Stretch> stretchsWithOrigin = getStretchs().stream()
+				.filter(s -> s.getOrigin().hashCode() == destiny.hashCode());
+		// Luego se busca la primera aparacion y se obtiene la posición, despues se
+		// busca la posicion en donde encuentra el tramo.
+		return getStretchs().indexOf(stretchsWithOrigin.findFirst().get());
+
+	}
+
+	private Integer getPositionOfOrigin(Terminal origin) {
+
+		// Se recorre todos los tramos, y se filtran solamente aquellos que tienen la
+		// terminal origen.
+		List<Stretch> stretchsWithOrigin = getStretchs().stream()
+				.filter(s -> s.getOrigin().hashCode() == origin.hashCode()).toList();
+		// Luego se busca la primera aparacion y se obtiene la posición, despues se
+		// busca la posicion en donde encuentra el tramo.
+		return getStretchs().indexOf(stretchsWithOrigin.stream().findFirst().get());
+
+	}
+
+	public Terminal originTerminal() {
+		return getStretchs().get(0).getOrigin();
+	}
 
 }
