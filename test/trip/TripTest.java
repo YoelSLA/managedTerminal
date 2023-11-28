@@ -1,13 +1,14 @@
 package trip;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.time.Month;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,89 +22,110 @@ import terminal.Terminal;
 
 class TripTest {
 
-	private Terminal quito = mock(Terminal.class);
-	private ManagedTerminal buenosAires = mock(ManagedTerminal.class);
-	private Stretch buenosAiresSantiago;
-	private Stretch santiagoQuito;
-	private Stretch quitoLima;
-	private Stretch limaBuenosAires;
-	private MaritimeCircuit maritimeCircuit;
-	private Ship ship;
+	private ManagedTerminal buenosAires;
+//-------------------------------------------------------------
+	private Terminal valparaiso;
+	private Terminal montevideo;
+//-------------------------------------------------------------
+	private Stretch valparaisoBuenosAires;
+	private Stretch buenosAiresMontevideo;
+	private Stretch montevideoValparaiso;
+//-------------------------------------------------------------
+	private MaritimeCircuit circuitValparaisoToMontevideo;
+//-------------------------------------------------------------
+	private Ship bismarck;
+//-------------------------------------------------------------
 	private LocalDateTime startDate;
-	private Trip trip;
+//-------------------------------------------------------------
+	private Trip tripValparaisoToMontevideo; // SUT
+//-------------------------------------------------------------
 
 	@BeforeEach
 	void setUp() {
-		// TERMINAL
-		Terminal santiago = mock(Terminal.class);
-		Terminal lima = mock(Terminal.class);
-
+		// MANAGED TERMINAL
+		buenosAires = mock(ManagedTerminal.class);
 		when(buenosAires.getName()).thenReturn("Puerto de Buenos Aires");
-		when(santiago.getName()).thenReturn("Puerto de Santiago");
-		when(quito.getName()).thenReturn("Puerto de Quito");
-		when(lima.getName()).thenReturn("Puerto de Lima");
+//-------------------------------------------------------------		
+		// TERMINAL
+		valparaiso = mock(Terminal.class);
+		when(valparaiso.getName()).thenReturn("Puerto de Valparaiso");
 
+		montevideo = mock(Terminal.class);
+		when(montevideo.getName()).thenReturn("Puerto de Montevideo");
+//-------------------------------------------------------------		
 		// STRETCH
-		buenosAiresSantiago = mock(Stretch.class);
-		santiagoQuito = mock(Stretch.class);
-		quitoLima = mock(Stretch.class);
-		limaBuenosAires = mock(Stretch.class);
+		valparaisoBuenosAires = mock(Stretch.class);
+		when(valparaisoBuenosAires.getOrigin()).thenReturn(valparaiso);
+		when(valparaisoBuenosAires.getDestiny()).thenReturn(buenosAires);
+		when(valparaisoBuenosAires.getTime()).thenReturn(Duration.ofHours(12));
 
-		when(buenosAiresSantiago.getOrigin()).thenReturn(buenosAires);
-		when(buenosAiresSantiago.getDestiny()).thenReturn(santiago);
-		when(buenosAiresSantiago.getTime()).thenReturn(Duration.ofHours(3));
+		buenosAiresMontevideo = mock(Stretch.class);
+		when(buenosAiresMontevideo.getOrigin()).thenReturn(buenosAires);
+		when(buenosAiresMontevideo.getDestiny()).thenReturn(montevideo);
+		when(buenosAiresMontevideo.getTime()).thenReturn(Duration.ofHours(3));
 
-		when(santiagoQuito.getOrigin()).thenReturn(santiago);
-		when(santiagoQuito.getDestiny()).thenReturn(quito);
-		when(santiagoQuito.getTime()).thenReturn(Duration.ofHours(5));
-
-		when(quitoLima.getOrigin()).thenReturn(quito);
-		when(quitoLima.getDestiny()).thenReturn(lima);
-		when(quitoLima.getTime()).thenReturn(Duration.ofHours(7));
-
-		when(limaBuenosAires.getOrigin()).thenReturn(lima);
-		when(limaBuenosAires.getDestiny()).thenReturn(buenosAires);
-		when(limaBuenosAires.getTime()).thenReturn(Duration.ofHours(15));
-
+		montevideoValparaiso = mock(Stretch.class);
+		when(montevideoValparaiso.getOrigin()).thenReturn(montevideo);
+		when(montevideoValparaiso.getDestiny()).thenReturn(valparaiso);
+		when(montevideoValparaiso.getTime()).thenReturn(Duration.ofHours(22));
+//-------------------------------------------------------------		
 		// MARITIME CIRCUIT
-		maritimeCircuit = mock(MaritimeCircuit.class);
-
-		when(maritimeCircuit.getStretchs())
-				.thenReturn(Arrays.asList(buenosAiresSantiago, santiagoQuito, quitoLima, limaBuenosAires));
-
+		circuitValparaisoToMontevideo = mock(MaritimeCircuit.class);
+		when(circuitValparaisoToMontevideo.getStretchs())
+				.thenReturn(List.of(valparaisoBuenosAires, buenosAiresMontevideo, montevideoValparaiso));
+		when(circuitValparaisoToMontevideo.originTerminals())
+				.thenReturn(List.of(valparaiso, buenosAires, montevideo, valparaiso));
+		when(circuitValparaisoToMontevideo.originTerminal()).thenReturn(valparaiso);
+//-------------------------------------------------------------		
 		// SHIP
-		ship = mock(Ship.class);
-
+		bismarck = mock(Ship.class);
+//-------------------------------------------------------------		
 		// TRIP
-		startDate = LocalDateTime.of(2023, 11, 26, 10, 0);
-		trip = new Trip(maritimeCircuit, ship, startDate);
+		startDate = LocalDateTime.of(2023, Month.DECEMBER, 01, 10, 0); // 01-12-23 | 10:00 Hs.
+		tripValparaisoToMontevideo = new Trip(circuitValparaisoToMontevideo, bismarck, startDate);
 	}
 
 	@Test
-	void testATripIsCreated() {
-		assertEquals(maritimeCircuit, trip.getMaritimeCircuit());
-		assertEquals(ship, trip.getShip());
-		assertEquals(startDate, trip.getStartDate());
-
+	void getMaritimeCircuit_ShouldReturnCorrectCircuit_ForNewlyCreatedTripValparaisoToMontevideo() {
+		assertEquals(circuitValparaisoToMontevideo, tripValparaisoToMontevideo.getMaritimeCircuit());
 	}
 
 	@Test
-	void testATripHasACertainTerminal() {
+	void getShip_ShouldReturnCorrectShip_ForNewlyCreatedTripValparaisoToMontevideo() {
+		assertEquals(bismarck, tripValparaisoToMontevideo.getShip());
+	}
+
+	@Test
+	void getStartDate_ShouldReturnCorrectStartDate_ForNewlyCreatedTripValparaisoToMontevideo() {
+		assertEquals(startDate, tripValparaisoToMontevideo.getStartDate());
+	}
+
+	@Test
+	void testHasATerminal_ShouldReturnTrue_ForTripValparaisoToMontevideoWhenLookingForMontevideo() {
 		// SetUp
-		when(maritimeCircuit.hasADestinyTerminal(Mockito.eq(quito))).thenReturn(true);
+		when(circuitValparaisoToMontevideo.hasATerminal(Mockito.eq(montevideo))).thenReturn(true);
 		// Assert
-		assertTrue(trip.hasADestinyTerminal(quito));
+		assertTrue(tripValparaisoToMontevideo.hasATerminal(montevideo));
 	}
 
 	@Test
-	void x() {
+	void testDateArrivedToDestiny_ShouldReturnCorrectDateTime_ForTripValparaisoToMontevideo() {
 		// SetUp
-		LocalDateTime arrivalDate = LocalDateTime.of(2023, 11, 26, 18, 0);
-		when(maritimeCircuit.originTerminal()).thenReturn(buenosAires);
-		when(maritimeCircuit.calculateTimeBetween(buenosAires, quito)).thenReturn(8);
+		when(circuitValparaisoToMontevideo.originTerminal()).thenReturn(valparaiso);
+		when(circuitValparaisoToMontevideo.calculateTimeBetween(valparaiso, buenosAires)).thenReturn(12);
 		// Assert
-		assertEquals(arrivalDate, trip.dateArrivedToDestiny(quito));
+		assertEquals(LocalDateTime.of(2023, Month.DECEMBER, 01, 22, 0),
+				tripValparaisoToMontevideo.dateArrivedToDestiny(buenosAires)); // 01-12-23 | 22:00 Hs.
+	}
 
+	@Test
+	void testOriginTerminal_ShouldReturnValparaiso_ForTripValparaisoToMontevideo() {
+		assertEquals(valparaiso, tripValparaisoToMontevideo.originTerminal());
+	}
+
+	@Test
+	void nextTerminalOf_ShouldReturnBuenosAires_ForValparaiso_ForTripValparaisoToMontevideo() {
+		assertEquals(buenosAires, tripValparaisoToMontevideo.nextTerminalOf(valparaiso));
 	}
 
 }

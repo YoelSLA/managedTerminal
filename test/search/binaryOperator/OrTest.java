@@ -106,12 +106,12 @@ class OrTest {
 		when(tripOne.getMaritimeCircuit()).thenReturn(maritimeCircuitOne);
 		when(tripOne.getStartDate()).thenReturn(LocalDateTime.of(2023, 11, 26, 12, 0));
 		when(tripOne.dateArrivedToDestiny(lima)).thenReturn(LocalDateTime.of(2022, 12, 1, 12, 0));
-		when(tripOne.hasADestinyTerminal(lima)).thenReturn(true);
+		when(tripOne.hasATerminal(lima)).thenReturn(true);
 
 		tripTwo = mock(Trip.class);
 		when(tripTwo.getMaritimeCircuit()).thenReturn(maritimeCircuitTwo);
 		when(tripTwo.getStartDate()).thenReturn(LocalDateTime.of(2023, 12, 1, 12, 0));
-		when(tripTwo.hasADestinyTerminal(caracas)).thenReturn(true);
+		when(tripTwo.hasATerminal(caracas)).thenReturn(true);
 		// -------------------------------------------------------------
 		leftClause = new DestinationTerminal(caracas);
 		rightClause = new ArrivalDate(Criteria.EQUALS, LocalDateTime.of(2022, 12, 1, 12, 0), lima);

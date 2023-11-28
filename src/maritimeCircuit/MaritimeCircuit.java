@@ -1,6 +1,7 @@
 package maritimeCircuit;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,12 +35,17 @@ public class MaritimeCircuit {
 		return stretchs;
 	}
 
-	public boolean hasADestinyTerminal(Terminal destiny) {
-		return stretchs.stream().anyMatch(s -> s.getDestiny().equals(destiny));
+	public boolean hasATerminal(Terminal destiny) {
+		return originTerminals().stream().anyMatch(t -> t.equals(destiny));
 	}
 
 	public Terminal originTerminal() {
 		return getStretchs().get(0).getOrigin();
 	}
 
+	public List<Terminal> originTerminals() {
+		List<Terminal> origins = new ArrayList<>(stretchs.stream().map(Stretch::getOrigin).toList());
+		origins.add(stretchs.get(0).getOrigin());
+		return origins;
+	}
 }

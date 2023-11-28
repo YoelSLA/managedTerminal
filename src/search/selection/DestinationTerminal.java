@@ -15,7 +15,7 @@ public class DestinationTerminal implements Selection {
 
 	@Override
 	public List<Trip> filterTrips(List<Trip> trips) {
-		return trips.stream().filter(t -> t.hasADestinyTerminal(destiny)).toList();
+		return trips.stream().filter(t -> t.hasATerminal(destiny)).toList();
 	}
 
 	public Terminal getDestiny() {

@@ -37,8 +37,8 @@ public class Trip {
 		return startDate;
 	}
 
-	public boolean hasADestinyTerminal(Terminal destiny) {
-		return maritimeCircuit.hasADestinyTerminal(destiny);
+	public boolean hasATerminal(Terminal terminal) {
+		return maritimeCircuit.hasATerminal(terminal);
 	}
 
 	public Terminal originTerminal() {
@@ -49,4 +49,9 @@ public class Trip {
 		ship.setTrip(trip);
 	}
 
+	public Terminal nextTerminalOf(Terminal terminal) {
+		Integer indexTerminal = maritimeCircuit.originTerminals().indexOf(terminal);
+		return maritimeCircuit.originTerminals().get(indexTerminal + 1);
+
+	}
 }

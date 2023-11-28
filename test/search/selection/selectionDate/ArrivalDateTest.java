@@ -100,13 +100,13 @@ class ArrivalDateTest {
 		when(tripOne.getMaritimeCircuit()).thenReturn(maritimeCircuitOne);
 		when(tripOne.getStartDate()).thenReturn(LocalDateTime.of(2023, 11, 26, 12, 0));
 		when(tripOne.dateArrivedToDestiny(quito)).thenReturn(LocalDateTime.of(2023, 11, 26, 20, 0));
-		when(tripOne.hasADestinyTerminal(quito)).thenReturn(true);
+		when(tripOne.hasATerminal(quito)).thenReturn(true);
 
 		tripTwo = mock(Trip.class);
 		when(tripTwo.getMaritimeCircuit()).thenReturn(maritimeCircuitTwo);
 		when(tripTwo.getStartDate()).thenReturn(LocalDateTime.of(2023, 12, 1, 12, 0));
 		when(tripTwo.dateArrivedToDestiny(quito)).thenReturn(LocalDateTime.of(2023, 12, 3, 12, 0));
-		when(tripTwo.hasADestinyTerminal(quito)).thenReturn(false);
+		when(tripTwo.hasATerminal(quito)).thenReturn(false);
 		// -------------------------------------------------------------
 		arrivalDate = new ArrivalDate(Criteria.EQUALS, LocalDateTime.of(2023, 11, 26, 20, 0), quito);
 	}

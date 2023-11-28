@@ -90,11 +90,11 @@ class DestinationTerminalTest {
 		// TRIP
 		tripOne = mock(Trip.class);
 		when(tripOne.getMaritimeCircuit()).thenReturn(maritimeCircuitOne);
-		when(tripOne.hasADestinyTerminal(quito)).thenReturn(true);
+		when(tripOne.hasATerminal(quito)).thenReturn(true);
 
 		tripTwo = mock(Trip.class);
 		when(tripTwo.getMaritimeCircuit()).thenReturn(maritimeCircuitTwo);
-		when(tripTwo.hasADestinyTerminal(quito)).thenReturn(false);
+		when(tripTwo.hasATerminal(quito)).thenReturn(false);
 		// -------------------------------------------------------------
 		destinationTerminal = new DestinationTerminal(quito);
 	}

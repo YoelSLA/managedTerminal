@@ -16,7 +16,7 @@ public class ArrivalDate extends SelectionDate {
 	@Override
 	public List<Trip> filterTrips(List<Trip> trips) {
 		return trips.stream()
-				.filter(t -> t.hasADestinyTerminal(terminal) && this.searchByCriteriaTo(t.dateArrivedToDestiny(terminal)))
+				.filter(t -> t.hasATerminal(terminal) && this.searchByCriteriaTo(t.dateArrivedToDestiny(terminal)))
 				.toList();
 	}
 
