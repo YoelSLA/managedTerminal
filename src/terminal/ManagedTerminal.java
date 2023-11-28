@@ -9,10 +9,10 @@ import java.util.stream.Collectors;
 import client.Consignee;
 import client.Shipper;
 import driver.Driver;
-import geographicalPosition.GeographicalPosition;
 import order.ExportOrder;
 import order.ImportOrder;
 import orderValidation.ExportValidation;
+import position.Position;
 import routing.Routing;
 import shippingLine.ShippingLine;
 import tracker.Tracker;
@@ -33,7 +33,7 @@ public class ManagedTerminal extends Terminal {
 	private List<TruckTransportCompany> truckTransportCompanies;
 	private List<Turn> turns;
 
-	public ManagedTerminal(GeographicalPosition geographicalPosition, Routing routing) {
+	public ManagedTerminal(Position geographicalPosition, Routing routing) {
 		super(geographicalPosition, "Puerto de Buenos Aires");
 		this.consignees = new ArrayList<Consignee>();
 		this.exportOrders = new ArrayList<ExportOrder>();

@@ -1,18 +1,17 @@
 package terminal;
 
-import geographicalPosition.GeographicalPosition;
+import position.Position;
 
 public abstract class Terminal {
-
-	private GeographicalPosition geographicalPosition;
+	private Position position;
 	private String name;
 
-	public Terminal(GeographicalPosition geographicalPosition, String name) {
-		this.geographicalPosition = geographicalPosition;
+	public Terminal(Position position, String name) {
+		this.position = position;
 	}
 
-	public GeographicalPosition getGeographicalPosition() {
-		return geographicalPosition;
+	public Position getPosition() {
+		return position;
 	}
 
 	public String getName() {

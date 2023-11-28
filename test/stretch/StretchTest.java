@@ -14,6 +14,7 @@ import terminal.Terminal;
 class StretchTest {
 
 	private ManagedTerminal buenosAires;
+//-------------------------------------------------------------
 	private Terminal santiago;
 //-------------------------------------------------------------
 	private Stretch buenosAiresSantiago;

@@ -1,96 +1,64 @@
 package ship;
 
-import geographicalPosition.GeographicalPosition;
+import phase.Inbound;
 import phase.Phase;
+import position.Position;
 import trip.Trip;
-
-/**
- * @author alejandrabesel Clase que representa un buque.
- * 
- *         Esta clase gestiona la información del buque a realizar el viaje,
- *         incluyendo su nombre y codigo IMO (indetificacion univoca de cada
- *         buque).
- */
 
 public class Ship {
 
+	private String imo;
+	private Boolean isOnTrip;
 	private String name;
 	private Phase phase;
-	private GeographicalPosition geographicalPosition;
-	/**
-	 * @author alejandrabesel Un codigo identificador de un buque generado por el
-	 *         String "IMO-" seguido de 7 letras (IMOXXXXXXX)
-	 */
-	private String imo;
+	private Position position;
 	private Trip trip;
 
-	/**
-	 * @author alejandrabesel Constructor de la clase Ship.
-	 * 
-	 *         Crea una instancia de la clase Ship con el nomrbe y el codigo imo
-	 *         identificador de cada buque.
-	 * 
-	 * @param name  El nombre del buque.
-	 * @param imo   El codigo indetificador del buque en formato "IMO-XXXXXXX".
-	 * @param phase La fase en la que se encuentra el buque.
-	 * 
-	 */
-	public Ship(String name, String imo, GeographicalPosition geographicalPosition) {
-		setName(name);
-		setImo(imo);
-		setPhase(phase);
-		setPosition(geographicalPosition);
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	private void setName(String name) {
+	public Ship(Position geographicalPosition, String imo, String name) {
+		this.imo = imo;
+		this.isOnTrip = false;
 		this.name = name;
+		this.phase = new Inbound();
+		this.position = geographicalPosition;
+	}
+
+	public Position getPosition() {
+		return position;
 	}
 
 	public String getImo() {
 		return imo;
 	}
 
-	private void setImo(String imo) {
-		this.imo = imo;
+	public Boolean getIsOnTrip() {
+		return isOnTrip;
 	}
 
-	private void setPhase(Phase phase) {
-		this.phase = phase;
+	public String getName() {
+		return name;
 	}
 
-	/**
-	 * Devuelve la fase en la que se encuentra el buque.
-	 */
 	public Phase getPhase() {
 		return phase;
-	}
-
-	/**
-	 * Devuelve la posicion geografica actual en la que se encuentra el buque
-	 * gracias a su sistema de gps.
-	 */
-	public GeographicalPosition getPosition() {
-		return geographicalPosition;
-	}
-
-	/**
-	 * Setea la nueva posicion geografica del buque que le devuelve dicho gps.
-	 * Observacion: la dejo en private porque entiendo que el buque se setea su
-	 * propia posicion
-	 */
-	private void setPosition(GeographicalPosition newPosition) {
-		this.geographicalPosition = newPosition;
-	}
-
-	public void otorgarViaje(Trip trip) {
-		this.trip = trip;
 	}
 
 	public Trip getTrip() {
 		return trip;
 	}
+
+	public void setPosition(Position position) {
+		this.position = position;
+	}
+
+	public void setTrip(Trip trip) {
+		if (isOnTrip) {
+			throw new RuntimeException("The ship has already started the trip");
+		}
+		this.trip = trip;
+	}
+
+	public void startTrip() {
+		isOnTrip = true;
+	}
+
 }

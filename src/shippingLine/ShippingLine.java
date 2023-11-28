@@ -2,11 +2,9 @@ package shippingLine;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import maritimeCircuit.MaritimeCircuit;
 import ship.Ship;
-import terminal.Terminal;
 import trip.Trip;
 
 public class ShippingLine {
@@ -45,24 +43,6 @@ public class ShippingLine {
 		return trips;
 	}
 
-	public List<MaritimeCircuit> maritimeCircuitsContaining(Terminal origin, Terminal destiny) {
-		return getMaritimeCircuits().stream()
-				.filter(m -> m.getStretchs().stream()
-						.anyMatch(s -> s.getOrigin().equals(origin) && s.getDestiny().equals(destiny)))
-				.collect(Collectors.toList());
-	}
-
-//	public List<MaritimeCircuit> maritimeCircuitsContaining3(Terminal origin, Terminal destiny) {
-//		return getMaritimeCircuits().stream()
-//				.filter(m -> m.isTheOriginTerminal(origin) && m.isTheDestinyTerminal(destiny)
-//						&& m.isTheOriginTerminalBeforeDestinationTerminal(origin, destiny))
-//				.collect(Collectors.toList());
-//	}
-//
-//	public List<MaritimeCircuit> maritimeCircuitsContaining2(Terminal origin, Terminal destiny) {
-//		return getMaritimeCircuits().stream().filter(m -> m.areTheTerminalsThere(origin, destiny)).toList();
-//	}
-
 	public void registerMaritimeCircuit(MaritimeCircuit maritimeCircuit) {
 		maritimeCircuits.add(maritimeCircuit);
 	}
@@ -76,36 +56,6 @@ public class ShippingLine {
 		validateMaritimeCircuitRegistrationIn(trip);
 		trips.add(trip);
 	}
-
-//	public List<MaritimeCircuit> maritimeCircuitsWhereTheTerminal(Terminal terminal) {
-//		return maritimeCircuits.stream().filter(m -> m.itHasASectionWhereItIs(terminal)).collect(Collectors.toList());
-//	}
-
-	/**
-	 * Metodo que retorna la lista de viajes que comienzan en la fecha dada.
-	 * 
-	 * @author Gabriela Fascetta
-	 */
-//	public List<Trip> getTripsThatStartOn(LocalDate date) {
-//		return trips.stream().filter(t -> t.getStartDate().isEqual(date)).collect(Collectors.toList());
-//	}
-
-	/**
-	 * Metodo que retorna la lista de circuitos maritimos a los que pertenece un
-	 * viaje que comienzan en la fecha dada.
-	 * 
-	 * @author Gabriela Fascetta
-	 */
-//	public List<MaritimeCircuit> getCircuitsWithTripsThatStartOn(LocalDate date) {
-//
-//		List<MaritimeCircuit> circuits = new ArrayList<>();
-//
-//		for (Trip t : getTripsThatStartOn(date)) {
-//			circuits.add(t.getMaritimeCircuit());
-//		}
-//
-//		return circuits;
-//	}
 
 	private void validateMaritimeCircuitRegistrationIn(Trip trip) throws Exception {
 		if (!getMaritimeCircuits().contains(trip.getMaritimeCircuit())) {
