@@ -20,8 +20,8 @@ public class Trip {
 		this.startDate = startDate;
 	}
 
-	public LocalDateTime dateArrivedToDestiny(Terminal destiny) {
-		return startDate.plus(maritimeCircuit.calculateTimeBetween(maritimeCircuit.originTerminal(), destiny),
+	public LocalDateTime dateArrivedToTerminal(Terminal terminal) {
+		return startDate.plus(maritimeCircuit.calculateTimeBetween(maritimeCircuit.originTerminal(), terminal),
 				ChronoUnit.HOURS);
 	}
 

@@ -104,13 +104,13 @@ class AndTest {
 		tripOne = mock(Trip.class);
 		when(tripOne.getMaritimeCircuit()).thenReturn(maritimeCircuitOne);
 		when(tripOne.getStartDate()).thenReturn(LocalDateTime.of(2023, 11, 26, 12, 0));
-		when(tripOne.dateArrivedToDestiny(lima)).thenReturn(LocalDateTime.of(2023, 6, 1, 12, 0));
+		when(tripOne.dateArrivedToTerminal(lima)).thenReturn(LocalDateTime.of(2023, 6, 1, 12, 0));
 		when(tripOne.hasATerminal(lima)).thenReturn(true);
 
 		tripTwo = mock(Trip.class);
 		when(tripTwo.getMaritimeCircuit()).thenReturn(maritimeCircuitTwo);
 		when(tripTwo.getStartDate()).thenReturn(LocalDateTime.of(2023, 12, 1, 12, 0));
-		when(tripTwo.dateArrivedToDestiny(lima)).thenReturn(LocalDateTime.of(2023, 8, 1, 12, 0));
+		when(tripTwo.dateArrivedToTerminal(lima)).thenReturn(LocalDateTime.of(2023, 8, 1, 12, 0));
 		when(tripTwo.hasATerminal(lima)).thenReturn(true);
 		// -------------------------------------------------------------
 		leftClause = new DestinationTerminal(lima);

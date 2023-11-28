@@ -99,13 +99,13 @@ class ArrivalDateTest {
 		tripOne = mock(Trip.class);
 		when(tripOne.getMaritimeCircuit()).thenReturn(maritimeCircuitOne);
 		when(tripOne.getStartDate()).thenReturn(LocalDateTime.of(2023, 11, 26, 12, 0));
-		when(tripOne.dateArrivedToDestiny(quito)).thenReturn(LocalDateTime.of(2023, 11, 26, 20, 0));
+		when(tripOne.dateArrivedToTerminal(quito)).thenReturn(LocalDateTime.of(2023, 11, 26, 20, 0));
 		when(tripOne.hasATerminal(quito)).thenReturn(true);
 
 		tripTwo = mock(Trip.class);
 		when(tripTwo.getMaritimeCircuit()).thenReturn(maritimeCircuitTwo);
 		when(tripTwo.getStartDate()).thenReturn(LocalDateTime.of(2023, 12, 1, 12, 0));
-		when(tripTwo.dateArrivedToDestiny(quito)).thenReturn(LocalDateTime.of(2023, 12, 3, 12, 0));
+		when(tripTwo.dateArrivedToTerminal(quito)).thenReturn(LocalDateTime.of(2023, 12, 3, 12, 0));
 		when(tripTwo.hasATerminal(quito)).thenReturn(false);
 		// -------------------------------------------------------------
 		arrivalDate = new ArrivalDate(Criteria.EQUALS, LocalDateTime.of(2023, 11, 26, 20, 0), quito);
@@ -127,7 +127,7 @@ class ArrivalDateTest {
 	void testTheDateIsLessThanWhatYouAreLookingFor() {
 		// Exercise
 		arrivalDate.setCriteria(Criteria.LESS_THAN);
-		when(tripOne.dateArrivedToDestiny(quito)).thenReturn(LocalDateTime.of(2023, 11, 20, 20, 0));
+		when(tripOne.dateArrivedToTerminal(quito)).thenReturn(LocalDateTime.of(2023, 11, 20, 20, 0));
 		// Assert
 		assertEquals(List.of(tripOne), arrivalDate.filterTrips(List.of(tripOne, tripTwo)));
 	}
@@ -136,7 +136,7 @@ class ArrivalDateTest {
 	void testTheDateIsGreatherThanWhatYouAreLookingFor() {
 		// Exercise
 		arrivalDate.setCriteria(Criteria.GREATHER_THAN);
-		when(tripOne.dateArrivedToDestiny(quito)).thenReturn(LocalDateTime.of(2023, 11, 30, 20, 0));
+		when(tripOne.dateArrivedToTerminal(quito)).thenReturn(LocalDateTime.of(2023, 11, 30, 20, 0));
 		// Assert
 		assertEquals(List.of(tripOne), arrivalDate.filterTrips(List.of(tripOne, tripTwo)));
 	}

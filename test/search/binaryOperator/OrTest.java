@@ -105,7 +105,7 @@ class OrTest {
 		tripOne = mock(Trip.class);
 		when(tripOne.getMaritimeCircuit()).thenReturn(maritimeCircuitOne);
 		when(tripOne.getStartDate()).thenReturn(LocalDateTime.of(2023, 11, 26, 12, 0));
-		when(tripOne.dateArrivedToDestiny(lima)).thenReturn(LocalDateTime.of(2022, 12, 1, 12, 0));
+		when(tripOne.dateArrivedToTerminal(lima)).thenReturn(LocalDateTime.of(2022, 12, 1, 12, 0));
 		when(tripOne.hasATerminal(lima)).thenReturn(true);
 
 		tripTwo = mock(Trip.class);

@@ -105,7 +105,7 @@ public class ManagedTerminal extends Terminal {
 
 	private void assignTurnFor(ExportOrder exportOrder) {
 		// Se obtiene la fecha de llegada del barco a la terminal gestionada.
-		LocalDateTime arrivedDate = exportOrder.getTrip().dateArrivedToDestiny(this);
+		LocalDateTime arrivedDate = exportOrder.getTrip().dateArrivedToTerminal(this);
 		// Se crea una nueva instancia de turno con la orden de exportación y la fecha
 		// establecida son 6 horas antes de que llegue el buque.
 		Turn turn = new Turn(exportOrder, arrivedDate.minus(6, ChronoUnit.HOURS));
