@@ -56,13 +56,13 @@ class OrTest {
 		// -------------------------------------------------------------
 		// MARITIME CIRCUIT
 		maritimeCircuitOne = mock(MaritimeCircuit.class);
-		when(maritimeCircuitOne.getStretchs()).thenReturn(
+		when(maritimeCircuitOne.getStretches()).thenReturn(
 				Arrays.asList(buenosAiresSantiago, santiagoQuito, quitoLima, limaCaracas, caracasBuenosAires));
 
 		maritimeCircuitTwo = mock(MaritimeCircuit.class);
-		when(maritimeCircuitTwo.getStretchs())
+		when(maritimeCircuitTwo.getStretches())
 				.thenReturn(Arrays.asList(buenosAiresSantiago, santiagoLima, limaCaracas, caracasBuenosAires));
-		when(maritimeCircuitOne.calculateTimeBetween(buenosAires, quito)).thenReturn(8);
+		when(maritimeCircuitOne.calculateTotalHoursBetweenTerminals(buenosAires, quito)).thenReturn(8);
 		// ------------------------------------------------------------ -
 		// STRETCH
 		buenosAiresSantiago = mock(Stretch.class);

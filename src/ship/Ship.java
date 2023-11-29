@@ -58,7 +58,7 @@ public class Ship {
 	}
 
 	public void startTrip() {
-		isOnTrip = true;
+		isOnTrip = !isOnTrip;
 	}
 
 }

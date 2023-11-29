@@ -23,7 +23,7 @@ public class LowerPrice extends Routing {
 	}
 
 	protected Double calculateRouting(ManagedTerminal origin, Terminal destiny, MaritimeCircuit maritimeCircuit) {
-		return maritimeCircuit.getStretchs()
+		return maritimeCircuit.getStretches()
 				.subList(maritimeCircuit.getPositionOf(origin), maritimeCircuit.getPositionOf(destiny)).stream()
 				.mapToDouble(Stretch::getPrice).sum();
 

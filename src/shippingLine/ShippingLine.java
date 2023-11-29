@@ -39,6 +39,10 @@ public class ShippingLine {
 		return ships;
 	}
 
+	public List<Ship> getShipsInTrip() {
+		return ships.stream().filter(s -> !s.getIsOnTrip()).toList();
+	}
+
 	public List<Trip> getTrips() {
 		return trips;
 	}
@@ -52,20 +56,25 @@ public class ShippingLine {
 	}
 
 	public void registerTrip(Trip trip) throws Exception {
-		validateShipRegistrationIn(trip);
-		validateMaritimeCircuitRegistrationIn(trip);
+		validateMaritimeCircuitRegistration(trip);
+		validateShipRegistration(trip);
 		trips.add(trip);
 	}
 
-	private void validateMaritimeCircuitRegistrationIn(Trip trip) throws Exception {
-		if (!getMaritimeCircuits().contains(trip.getMaritimeCircuit())) {
+	public void setMaritimeCircuits(List<MaritimeCircuit> maritimeCircuits) {
+		this.maritimeCircuits = maritimeCircuits;
+	}
+
+	private void validateMaritimeCircuitRegistration(Trip trip) throws Exception {
+		if (!maritimeCircuits.contains(trip.getMaritimeCircuit())) {
 			throw new RuntimeException("The maritime circuit is not registered in the shipping line.");
 		}
 	}
 
-	private void validateShipRegistrationIn(Trip trip) throws Exception {
-		if (!getShips().contains(trip.getShip())) {
+	private void validateShipRegistration(Trip trip) throws Exception {
+		if (!ships.contains(trip.getShip())) {
 			throw new RuntimeException("The ship is not registered in the shipping line.");
 		}
 	}
+
 }

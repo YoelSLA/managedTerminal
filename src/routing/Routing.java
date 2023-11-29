@@ -23,7 +23,7 @@ public abstract class Routing {
 
 	public void validateTerminalDestinyIn(Terminal destiny, List<MaritimeCircuit> maritimeCircuits) {
 		if (maritimeCircuits.stream().noneMatch(
-				circuit -> circuit.getStretchs().stream().anyMatch(stretch -> stretch.getDestiny().equals(destiny)))) {
+				circuit -> circuit.getStretches().stream().anyMatch(stretch -> stretch.getDestiny().equals(destiny)))) {
 			throw new RuntimeException("The destiny must be in the maritime circuits.");
 		}
 	}

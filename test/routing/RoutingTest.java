@@ -51,9 +51,9 @@ class RoutingTest {
 		when(caracasBuenosAires.getDestiny()).thenReturn(buenosAires);
 		when(santiagoLima.getOrigin()).thenReturn(buenosAires);
 		when(santiagoLima.getDestiny()).thenReturn(buenosAires);
-		when(maritimeCircuitOne.getStretchs()).thenReturn(
+		when(maritimeCircuitOne.getStretches()).thenReturn(
 				Arrays.asList(buenosAiresSantiago, santiagoQuito, quitoLima, limaCaracas, caracasBuenosAires));
-		when(maritimeCircuitTwo.getStretchs())
+		when(maritimeCircuitTwo.getStretches())
 				.thenReturn(Arrays.asList(buenosAiresSantiago, santiagoLima, limaCaracas, caracasBuenosAires));
 	}
 

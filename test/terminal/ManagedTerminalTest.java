@@ -88,7 +88,7 @@ class ManagedTerminalTest<Point2D> {
 		// MARITIME CIRCUIT
 		maritimeCircuit = mock(MaritimeCircuit.class);
 
-		when(maritimeCircuit.getStretchs())
+		when(maritimeCircuit.getStretches())
 				.thenReturn(Arrays.asList(buenosAiresSantiago, santiagoQuito, quitoLima, limaBuenosAires));
 //-------------------------------------------------------------
 		// SHIPPER

@@ -21,7 +21,8 @@ public class Trip {
 	}
 
 	public LocalDateTime dateArrivedToTerminal(Terminal terminal) {
-		return startDate.plus(maritimeCircuit.calculateTimeBetween(maritimeCircuit.originTerminal(), terminal),
+		return startDate.plus(
+				maritimeCircuit.calculateTotalHoursBetweenTerminals(maritimeCircuit.originTerminal(), terminal),
 				ChronoUnit.HOURS);
 	}
 
