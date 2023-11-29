@@ -2,19 +2,9 @@ package terminal;
 
 import position.Position;
 
-public abstract class Terminal {
-	private Position position;
-	private String name;
+public interface Terminal {
 
-	public Terminal(Position position, String name) {
-		this.position = position;
-	}
+	Position getPosition();
 
-	public Position getPosition() {
-		return position;
-	}
-
-	public String getName() {
-		return name;
-	}
+	String getName();
 }

@@ -20,10 +20,14 @@ public class Trip {
 		this.startDate = startDate;
 	}
 
-	public LocalDateTime dateArrivedToTerminal(Terminal terminal) {
-		return startDate.plus(
-				maritimeCircuit.calculateTotalHoursBetweenTerminals(maritimeCircuit.originTerminal(), terminal),
-				ChronoUnit.HOURS);
+	public LocalDateTime calculateArrivalDateToTerminal(Terminal terminal) {
+		// Se obtiene la terminal origen del circuito maritimo.
+		final Terminal originTerminal = maritimeCircuit.originTerminal();
+		// Se calcula las horas totales hasta la llegada a la terminal del parámetro.
+		final Integer hoursToArrival = maritimeCircuit.calculateTotalHoursBetweenTerminals(originTerminal, terminal);
+		// Se suma las horas al startDate para obtener la fecha de llegada a la terminal
+		// del parámetro.
+		return startDate.plus(hoursToArrival, ChronoUnit.HOURS);
 	}
 
 	public MaritimeCircuit getMaritimeCircuit() {
@@ -42,6 +46,13 @@ public class Trip {
 		return maritimeCircuit.hasATerminal(terminal);
 	}
 
+	public Terminal nextTerminalOf(Terminal terminal) {
+		// Se obtiene el índice de la terminal del parámetro.
+		final Integer indexTerminal = maritimeCircuit.originTerminals().indexOf(terminal);
+		// Se retorna la siguiente terminal del parámetro.
+		return maritimeCircuit.originTerminals().get(indexTerminal + 1);
+	}
+
 	public Terminal originTerminal() {
 		return maritimeCircuit.originTerminal();
 	}
@@ -50,9 +61,4 @@ public class Trip {
 		ship.setTrip(trip);
 	}
 
-	public Terminal nextTerminalOf(Terminal terminal) {
-		Integer indexTerminal = maritimeCircuit.originTerminals().indexOf(terminal);
-		return maritimeCircuit.originTerminals().get(indexTerminal + 1);
-
-	}
 }

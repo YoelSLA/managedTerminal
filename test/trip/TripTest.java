@@ -115,7 +115,7 @@ class TripTest {
 		when(circuitValparaisoToMontevideo.calculateTotalHoursBetweenTerminals(valparaiso, buenosAires)).thenReturn(12);
 		// Assert
 		assertEquals(LocalDateTime.of(2023, Month.DECEMBER, 01, 22, 0),
-				tripValparaisoToMontevideo.dateArrivedToTerminal(buenosAires)); // 01-12-23 | 22:00 Hs.
+				tripValparaisoToMontevideo.calculateArrivalDateToTerminal(buenosAires)); // 01-12-23 | 22:00 Hs.
 	}
 
 	@Test

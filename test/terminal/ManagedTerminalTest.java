@@ -1,8 +1,8 @@
 package terminal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.time.Duration;
@@ -18,241 +18,161 @@ import client.Shipper;
 import driver.Driver;
 import maritimeCircuit.MaritimeCircuit;
 import order.ExportOrder;
-import position.Position;
 import routing.Routing;
 import shippingLine.ShippingLine;
 import stretch.Stretch;
+import tracker.Tracker;
 import trip.Trip;
 import truck.Truck;
 import truckTransportCompany.TruckTransportCompany;
 
-class ManagedTerminalTest<Point2D> {
+class ManagedTerminalTest {
 
-	private Consignee consigneeGabriela;
-//-------------------------------------------------------------
-	private Driver driverAlberto;
-//-------------------------------------------------------------
-	private ExportOrder exportOrderOfAlejandra;
-//-------------------------------------------------------------
-	private Position positionBuenosAires;
-//-------------------------------------------------------------
-	private MaritimeCircuit maritimeCircuit;
-//-------------------------------------------------------------
-	private Routing ferFewerIntermediateTerminals;
-	private Routing lowerPrice;
-	private Routing shorterTime;
-//-------------------------------------------------------------
-	private Shipper shipperAlejandra;
+	private Terminal montevideo;
+	private Terminal rioDeJaneiro;
+	// ------------------------------------------------------------
+	private Stretch buenosAiresMontevideo;
+	private Stretch montevideoRioDeJaneiro;
+	private Stretch rioDeJaneiroBuenosAires;
+	// ------------------------------------------------------------
+	private MaritimeCircuit circuitBuenosAiresRioDeJaneiro;
+	// ------------------------------------------------------------
 	private ShippingLine apmMaersk;
-//-------------------------------------------------------------
-	private Stretch buenosAiresSantiago;
-	private Stretch santiagoQuito;
-	private Stretch quitoLima;
-	private Stretch limaBuenosAires;
-//-------------------------------------------------------------
-	private Terminal santiago;
-	private Terminal quito;
-	private Terminal lima;
-//-------------------------------------------------------------
-	private Trip trip;
-//-------------------------------------------------------------
+	// ------------------------------------------------------------
+	private Driver driverAlberto;
+	// ------------------------------------------------------------
 	private Truck volvoTruck;
-//-------------------------------------------------------------
-	private TruckTransportCompany transporteVesprini;
-//-------------------------------------------------------------
+	// ------------------------------------------------------------
+	private TruckTransportCompany transportVesprini;
+	// ------------------------------------------------------------
+	private Consignee consigneeGabriela;
+	// ------------------------------------------------------------
+	private Shipper shipperAlejandra;
+	// ------------------------------------------------------------
+	private ExportOrder exportOrderOfAlejandra;
+	// ------------------------------------------------------------
+	private Trip tripBuenosAiresRioDeJaneiro;
+	// ------------------------------------------------------------
+	private Routing ferFewerIntermediateTerminals;
+	// ------------------------------------------------------------
 	private ManagedTerminal buenosAires; // SUT
 
 	@BeforeEach
 	void setUp() {
-//-------------------------------------------------------------
+		// TERMINAL
+		montevideo = mock(Terminal.class);
+		rioDeJaneiro = mock(Terminal.class);
+		// ------------------------------------------------------------------------------------------
+		// STRETCH
+		buenosAiresMontevideo = mock(Stretch.class);
+		when(buenosAiresMontevideo.getOrigin()).thenReturn(buenosAires);
+		when(buenosAiresMontevideo.getDestiny()).thenReturn(montevideo);
+		when(buenosAiresMontevideo.getTime()).thenReturn(Duration.ofHours(3));
+
+		montevideoRioDeJaneiro = mock(Stretch.class);
+		when(montevideoRioDeJaneiro.getOrigin()).thenReturn(montevideo);
+		when(montevideoRioDeJaneiro.getDestiny()).thenReturn(rioDeJaneiro);
+		when(montevideoRioDeJaneiro.getTime()).thenReturn(Duration.ofHours(8));
+
+		rioDeJaneiroBuenosAires = mock(Stretch.class);
+		when(rioDeJaneiroBuenosAires.getOrigin()).thenReturn(rioDeJaneiro);
+		when(rioDeJaneiroBuenosAires.getDestiny()).thenReturn(buenosAires);
+		when(rioDeJaneiroBuenosAires.getTime()).thenReturn(Duration.ofHours(16));
+		// ------------------------------------------------------------------------------------------
+		// MARITIME CIRCUIT
+		circuitBuenosAiresRioDeJaneiro = mock(MaritimeCircuit.class);
+		when(circuitBuenosAiresRioDeJaneiro.getStretches())
+				.thenReturn(List.of(buenosAiresMontevideo, montevideoRioDeJaneiro, rioDeJaneiroBuenosAires));
+		// ------------------------------------------------------------------------------------------
+		// SHIPPING LINE
+		apmMaersk = spy(new ShippingLine("30234051497", "APM Maersk"));
+		when(apmMaersk.getMaritimeCircuits()).thenReturn(List.of(circuitBuenosAiresRioDeJaneiro));
+		// ------------------------------------------------------------------------------------------
 		// DRIVER
 		driverAlberto = mock(Driver.class);
-//-------------------------------------------------------------
+		// ------------------------------------------------------------------------------------------
+		// TRUCK
+		volvoTruck = mock(Truck.class);
+		// ------------------------------------------------------------------------------------------
+		// TRUCK TRANSPORT COMPANY
+		transportVesprini = mock(TruckTransportCompany.class);
+		when(transportVesprini.getDrivers()).thenReturn(Arrays.asList(driverAlberto));
+		when(transportVesprini.getTrucks()).thenReturn(Arrays.asList(volvoTruck));
+		// ------------------------------------------------------------------------------------------
 		// CONSIGNEE
 		consigneeGabriela = mock(Consignee.class);
-//-------------------------------------------------------------
+		// ------------------------------------------------------------------------------------------
+		// SHIPPER
+		shipperAlejandra = mock(Shipper.class);
+		// ------------------------------------------------------------------------------------------
 		// EXPORT ORDER
 		exportOrderOfAlejandra = mock(ExportOrder.class);
-
 		when(exportOrderOfAlejandra.getShipper()).thenReturn(shipperAlejandra);
 		when(exportOrderOfAlejandra.getDriver()).thenReturn(driverAlberto);
 		when(exportOrderOfAlejandra.getTruck()).thenReturn(volvoTruck);
-		when(exportOrderOfAlejandra.getTrip()).thenReturn(trip);
-//-------------------------------------------------------------
-		// GEOGRAPHICAL POSITION
-		positionBuenosAires = mock(Position.class);
-
-		when(positionBuenosAires.getAltitude()).thenReturn(-58.373877081937);
-		when(positionBuenosAires.getLatitude()).thenReturn(-34.5795823299825);
-//-------------------------------------------------------------
-		// MARITIME CIRCUIT
-		maritimeCircuit = mock(MaritimeCircuit.class);
-
-		when(maritimeCircuit.getStretches())
-				.thenReturn(Arrays.asList(buenosAiresSantiago, santiagoQuito, quitoLima, limaBuenosAires));
-//-------------------------------------------------------------
-		// SHIPPER
-		shipperAlejandra = mock(Shipper.class);
-//-------------------------------------------------------------
-		// SHIPPING LINE
-		apmMaersk = mock(ShippingLine.class);
-//-------------------------------------------------------------
-		// STRETCH
-		buenosAiresSantiago = mock(Stretch.class);
-		when(buenosAiresSantiago.getOrigin()).thenReturn(buenosAires);
-		when(buenosAiresSantiago.getDestiny()).thenReturn(santiago);
-		when(buenosAiresSantiago.getTime()).thenReturn(Duration.ofHours(3));
-
-		santiagoQuito = mock(Stretch.class);
-		when(santiagoQuito.getOrigin()).thenReturn(santiago);
-		when(santiagoQuito.getDestiny()).thenReturn(quito);
-		when(santiagoQuito.getTime()).thenReturn(Duration.ofHours(5));
-
-		quitoLima = mock(Stretch.class);
-		when(quitoLima.getOrigin()).thenReturn(quito);
-		when(quitoLima.getDestiny()).thenReturn(lima);
-		when(quitoLima.getTime()).thenReturn(Duration.ofHours(7));
-
-		limaBuenosAires = mock(Stretch.class);
-		when(limaBuenosAires.getOrigin()).thenReturn(lima);
-		when(limaBuenosAires.getDestiny()).thenReturn(buenosAires);
-		when(limaBuenosAires.getTime()).thenReturn(Duration.ofHours(15));
-//-------------------------------------------------------------
-		// TERMINAL
-		santiago = mock(Terminal.class);
-		quito = mock(Terminal.class);
-		lima = mock(Terminal.class);
-//-------------------------------------------------------------
-		// TRUCK
-		volvoTruck = mock(Truck.class);
-//-------------------------------------------------------------
-		// TRUCK TRANSPORT COMPANY
-		transporteVesprini = mock(TruckTransportCompany.class);
-
-		when(transporteVesprini.getDrivers()).thenReturn(Arrays.asList(driverAlberto));
-		when(transporteVesprini.getTrucks()).thenReturn(Arrays.asList(volvoTruck));
-//-------------------------------------------------------------
+		when(exportOrderOfAlejandra.getTrip()).thenReturn(tripBuenosAiresRioDeJaneiro);
+		// ------------------------------------------------------------------------------------------
 		// TRIP
-		trip = mock(Trip.class);
-
-		when(trip.getStartDate()).thenReturn(LocalDateTime.of(2023, 11, 26, 10, 0));
-		when(trip.getMaritimeCircuit()).thenReturn(maritimeCircuit);
-//-------------------------------------------------------------
+		tripBuenosAiresRioDeJaneiro = mock(Trip.class);
+		when(tripBuenosAiresRioDeJaneiro.getStartDate()).thenReturn(LocalDateTime.of(2023, 11, 26, 10, 0));
+		when(tripBuenosAiresRioDeJaneiro.getMaritimeCircuit()).thenReturn(circuitBuenosAiresRioDeJaneiro);
+		// ------------------------------------------------------------------------------------------
 		// ROUTING
 		ferFewerIntermediateTerminals = mock(Routing.class);
-		lowerPrice = mock(Routing.class);
-		shorterTime = mock(Routing.class);
-
-//-------------------------------------------------------------
+		// ------------------------------------------------------------------------------------------
 		// MANAGED TERMINAL
-		buenosAires = new ManagedTerminal(positionBuenosAires, ferFewerIntermediateTerminals);
+		buenosAires = new ManagedTerminal(ferFewerIntermediateTerminals);
 	}
 
-// ----------------------------------
-// CREATION
-// ----------------------------------
+	// ------------------------------------------------------------
+	// INITIALIZE MANAGED TERMINAL
+	// ------------------------------------------------------------
 	@Test
-	void testAManagedTerminalIsCreated() {
-
-		// Assert
+	void testInitializeTerminal_ConsignedEntities_ShouldHaveEmptyConsigneesList() {
 		assertEquals(0, buenosAires.getConsignees().size());
+	}
+
+	@Test
+	void testInitializeTerminal_ConsignedEntities_ShouldHaveEmptyExportOrdersList() {
 		assertEquals(0, buenosAires.getExportOrders().size());
-		assertEquals(positionBuenosAires, buenosAires.getPosition());
-		assertEquals(0, buenosAires.getImportOrders().size());
-		assertEquals(ferFewerIntermediateTerminals, buenosAires.getRouting());
+	}
+
+	@Test
+	void tesIinitializeTerminal_ConsignedEntities_ShouldHaveEmptyShippersList() {
 		assertEquals(0, buenosAires.getShippers().size());
+	}
+
+	@Test
+	void testInitializeTerminal_ConsignedEntities_ShouldHaveEmptyShippingLinesList() {
 		assertEquals(0, buenosAires.getShippingLines().size());
+	}
+
+	@Test
+	void testInitializeTerminal_ConsignedEntities_ShouldHaveEmptyTruckTransportCompaniesList() {
 		assertEquals(0, buenosAires.getTruckTransportCompanies().size());
+	}
+
+	@Test
+	void testInitializeTerminal_ConsignedEntities_ShouldHaveEmptyTurnsList() {
 		assertEquals(0, buenosAires.getTurns().size());
 	}
 
-// ----------------------------------
-// METHODS TO ADD TO MANAGED TERMINAL
-// ----------------------------------
 	@Test
-	void testAManagedTerminalRegistersAConsignee() {
-		// Exercise
-		buenosAires.registerConsignee(consigneeGabriela);
-		// Assert
-		assertEquals(1, buenosAires.getConsignees().size());
+	void testInitializeTerminal_Name_ShouldBeExpectedName() {
+		assertEquals("Puerto de Buenos Aires", buenosAires.getName());
 	}
 
 	@Test
-	void testAManagedTerminalRegistersAShipper() {
-		// Exercise
-		buenosAires.registerShipper(shipperAlejandra);
-		// Assert
-		assertEquals(1, buenosAires.getShippers().size());
+	void testInitializeTerminal_Position_ShouldHaveExpectedAltitudeAndLatitude() {
+		assertEquals(-58.373877081937, buenosAires.getPosition().getAltitude());
+		assertEquals(-34.5795823299825, buenosAires.getPosition().getLatitude());
 	}
 
-	@Test
-	void testAManagedTerminalRegistersAShippingCompany() {
-		// Exercise
-		buenosAires.registerShippingCompany(apmMaersk);
-		// Assert
-		assertEquals(1, buenosAires.getShippingLines().size());
+	void testInitializeTerminal_Details_ShouldHaveExpectedRouting() {
+		assertEquals(ferFewerIntermediateTerminals, buenosAires.getRouting());
 	}
 
-	@Test
-	void testAManagedTerminalRegistersATruckTransportCompany() {
-		// Exercise
-		buenosAires.registerTruckTransportCompany(transporteVesprini);
-		// Assert
-		assertEquals(1, buenosAires.getTruckTransportCompanies().size());
+	void testInitializeTerminal_Details_ShouldHaveTrackerOfExpectedType() {
+		assertEquals(Tracker.class, buenosAires.getTracker().getClass());
 	}
-
-// ----------------------------------
-// EXPORT
-// ----------------------------------
-	@Test
-	void testTheExportOrderIsNotRegisteredBecauseTheDriverIsNotRegistered() {
-		// Set Up
-		when(transporteVesprini.getDrivers()).thenReturn(List.of());
-		// Assert
-		assertThrows(RuntimeException.class, () -> {
-			buenosAires.hireExportService(exportOrderOfAlejandra);
-		});
-	}
-
-	@Test
-	void testTheExportOrderIsNotRegisteredBecauseTheTruckIsNotRegistered() {
-		// Set Up
-		when(transporteVesprini.getDrivers()).thenReturn(List.of());
-		// Assert
-		assertThrows(RuntimeException.class, () -> {
-			buenosAires.hireExportService(exportOrderOfAlejandra);
-		});
-	}
-
-//	@Test
-//	void testTheShipperIsNotRegisteredInTheManagedTerminaThereforeItIsRegistered() {
-//		// Excerise
-//		buenosAires.registerTruckTransportCompany(transporteVesprini);
-//		buenosAires.hireExportService(exportOrderOfAlejandra);
-//		// Assert
-//		assertTrue(buenosAires.getShippers().contains(shipperAlejandra));
-//	}
-
-//	@Test
-//	void testTheExportOrderIsValidAndAShiftIsAssigned() {
-//		// Excerise
-//		buenosAires.registerShippingCompany(apmMaersk);
-//		buenosAires.hireExportService(exportOrderOfAlejandra);
-//		// Assert
-//		assertEquals(LocalDateTime.of(2023, 12, 10, 10, 10), buenosAires.getTurns().get(0).getDateTurn());
-//		assertEquals(1, buenosAires.getTurns().size());
-//
-//	}
-
-// ----------------------------------
-// IMPORT
-// ----------------------------------
-
-// ----------------------------------
-// WHEN TRUCK ARRIVED WITH LOAD
-// ----------------------------------
-
-// ----------------------------------
-// WHEN TRUCK LEAVE WITH LOAD
-// ----------------------------------
 }

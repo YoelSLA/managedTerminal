@@ -1,27 +1,20 @@
 package terminal;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import client.Consignee;
 import client.Shipper;
-import driver.Driver;
 import order.ExportOrder;
 import order.ImportOrder;
-import orderValidation.ExportValidation;
 import position.Position;
 import routing.Routing;
 import shippingLine.ShippingLine;
 import tracker.Tracker;
-import trip.Trip;
-import truck.Truck;
 import truckTransportCompany.TruckTransportCompany;
 import turn.Turn;
 
-public class ManagedTerminal extends Terminal {
+public class ManagedTerminal implements Terminal {
 
 	private List<Consignee> consignees;
 	private List<ExportOrder> exportOrders;
@@ -33,8 +26,7 @@ public class ManagedTerminal extends Terminal {
 	private List<TruckTransportCompany> truckTransportCompanies;
 	private List<Turn> turns;
 
-	public ManagedTerminal(Position geographicalPosition, Routing routing) {
-		super(geographicalPosition, "Puerto de Buenos Aires");
+	public ManagedTerminal(Routing routing) {
 		this.consignees = new ArrayList<Consignee>();
 		this.exportOrders = new ArrayList<ExportOrder>();
 		this.importOrders = new ArrayList<ImportOrder>();
@@ -46,6 +38,10 @@ public class ManagedTerminal extends Terminal {
 		this.turns = new ArrayList<Turn>();
 	}
 
+	// ----------------------------------
+	// GETTERS
+	// ----------------------------------
+
 	public List<Consignee> getConsignees() {
 		return consignees;
 	}
@@ -56,6 +52,16 @@ public class ManagedTerminal extends Terminal {
 
 	public List<ImportOrder> getImportOrders() {
 		return importOrders;
+	}
+
+	@Override
+	public String getName() {
+		return "Puerto de Buenos Aires";
+	}
+
+	@Override
+	public Position getPosition() {
+		return new Position(-58.373877081937, -34.5795823299825);
 	}
 
 	public Routing getRouting() {
@@ -82,44 +88,9 @@ public class ManagedTerminal extends Terminal {
 		return turns;
 	}
 
-	public List<Trip> searchTrips() {
-		return tracker.searchTrips(allTripsInAllShippingLines());
-	}
-
-	public void hireExportService(ExportOrder exportOrder) {
-		// Se agrega al shipper que esta en la orden de exportacíon a la terminal
-		// gestionada si no esta registrado, caso contriario no se hace nada.
-		if (!getShippers().contains(exportOrder.getShipper())) {
-			shippers.add(exportOrder.getShipper());
-		}
-		// Luego se debe validar que la orden de exportación sea valida, para eso se
-		// debe verificar que el chofer y el camión de la orden esten registrados en la
-		// terminal gestionada.
-		ExportValidation.validateOrderFor(exportOrder, this);
-		// Se le asigna un turno a la orden de exportación.
-		assignTurnFor(exportOrder);
-		// Se añade la orden de exportación a la lista de ordenes.
-		exportOrders.add(exportOrder);
-
-	}
-
-	private void assignTurnFor(ExportOrder exportOrder) {
-		// Se obtiene la fecha de llegada del barco a la terminal gestionada.
-		LocalDateTime arrivedDate = exportOrder.getTrip().dateArrivedToTerminal(this);
-		// Se crea una nueva instancia de turno con la orden de exportación y la fecha
-		// establecida son 6 horas antes de que llegue el buque.
-		Turn turn = new Turn(exportOrder, arrivedDate.minus(6, ChronoUnit.HOURS));
-		turns.add(turn);
-
-	}
-
-	public boolean isItRegistered(Driver driver) {
-		return registredDrivers().contains(driver);
-	}
-
-	public boolean isItRegistered(Truck truck) {
-		return registredTrucks().contains(truck);
-	}
+	// ----------------------------------
+	// REGISTRATION METHODS
+	// ----------------------------------
 
 	public void registerConsignee(Consignee consignee) {
 		consignees.add(consignee);
@@ -129,7 +100,12 @@ public class ManagedTerminal extends Terminal {
 		shippers.add(shipper);
 	}
 
-	public void registerShippingCompany(ShippingLine shippingCompany) {
+	public void registerShippingCompany2(ShippingLine shippingCompany) {
+
+		System.out.println("1 " + shippingCompany.getMaritimeCircuits());
+		System.out.println("2 " + shippingCompany.maritimeCircuitsForTerminal(this));
+		shippingCompany.setMaritimeCircuits(shippingCompany.maritimeCircuitsForTerminal(this));
+		System.out.println("3 " + shippingCompany.getMaritimeCircuits());
 		// TODO: HACER
 		// Al registrar una naviera en la terminal gestionada, solamente interesa de la
 		// naviera los circuitos donde incluyan a la terminal gestionada (sea como
@@ -137,22 +113,14 @@ public class ManagedTerminal extends Terminal {
 		shippingLines.add(shippingCompany);
 	}
 
+	public void registerShippingCompany(ShippingLine shippingLine) {
+
+		// shippingCompany.registerToTerminal(this);
+		// shippingLines.add(shippingCompany);
+	}
+
 	public void registerTruckTransportCompany(TruckTransportCompany truckTransportCompany) {
 		truckTransportCompanies.add(truckTransportCompany);
-	}
-
-	private List<Driver> registredDrivers() {
-		return truckTransportCompanies.stream().flatMap(t -> t.getDrivers().stream()).distinct()
-				.collect(Collectors.toList());
-	}
-
-	private List<Truck> registredTrucks() {
-		return truckTransportCompanies.stream().flatMap(t -> t.getTrucks().stream()).distinct()
-				.collect(Collectors.toList());
-	}
-
-	private List<Trip> allTripsInAllShippingLines() {
-		return shippingLines.stream().flatMap(s -> s.getTrips().stream().distinct()).toList();
 	}
 
 }
