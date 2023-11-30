@@ -2,33 +2,33 @@ package position;
 
 public class Position {
 
-	private double altitude;
 	private double latitude;
+	private double longitude;
 
-	public Position(Double altitude, Double latitude) {
-		this.altitude = altitude;
+	public Position(Double latitude, Double longitude) {
 		this.latitude = latitude;
-	}
-
-	public Double getAltitude() {
-		return altitude;
+		this.longitude = longitude;
 	}
 
 	public Double getLatitude() {
 		return latitude;
 	}
 
-	public void setAltitude(double altitude) {
-		this.altitude = altitude;
+	public Double getLongitude() {
+		return longitude;
 	}
 
 	public void setLatitude(double latitude) {
 		this.latitude = latitude;
 	}
 
-	public void setPosition(Double altitude, Double latitude) {
-		setAltitude(altitude);
-		setAltitude(latitude);
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
+	}
+
+	public void setPosition(Double latitude, Double longitude) {
+		setLatitude(latitude);
+		setLongitude(longitude);
 	}
 
 }

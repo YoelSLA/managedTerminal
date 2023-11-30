@@ -8,31 +8,31 @@ import terminal.ManagedTerminal;
 import truck.Truck;
 
 /**
- * Validador de órdenes de exportación. Implementa el algoritmo del método
+ * Validador de ï¿½rdenes de exportaciï¿½n. Implementa el algoritmo del mï¿½todo
  * validation de su superclase.
  * 
  * @author Gabriela Fascetta | Yoel Ventoso
  */
 public final class ExportValidation extends OrderValidation {
 
-	public static void validateOrderFor(ExportOrder exportOrder, ManagedTerminal managedTerminal) {
-		validateDriverOf(exportOrder, managedTerminal);
-		validateTruckOf(exportOrder, managedTerminal);
+//	public static void validateOrderFor(ExportOrder exportOrder, ManagedTerminal managedTerminal) {
+//		validateDriverOf(exportOrder, managedTerminal);
+//		validateTruckOf(exportOrder, managedTerminal);
+//
+//	}
 
-	}
+//	private static void validateDriverOf(ExportOrder exportOrder, ManagedTerminal managedTerminal) {
+//		if (!managedTerminal.isItRegistered(exportOrder.getDriver())) {
+//			throw new RuntimeException("The driver is not registered at the managed terminal.");
+//		}
+//
+//	}
 
-	private static void validateDriverOf(ExportOrder exportOrder, ManagedTerminal managedTerminal) {
-		if (!managedTerminal.isItRegistered(exportOrder.getDriver())) {
-			throw new RuntimeException("The driver is not registered at the managed terminal.");
-		}
-
-	}
-
-	private static void validateTruckOf(ExportOrder exportOrder, ManagedTerminal managedTerminal) {
-		if (!managedTerminal.isItRegistered(exportOrder.getTruck())) {
-			throw new RuntimeException("El camión no esta registrado en la terminal gestionada.");
-		}
-	}
+//	private static void validateTruckOf(ExportOrder exportOrder, ManagedTerminal managedTerminal) {
+//		if (!managedTerminal.isItRegistered(exportOrder.getTruck())) {
+//			throw new RuntimeException("El camiï¿½n no esta registrado en la terminal gestionada.");
+//		}
+//	}
 
 	public static void validateTruckEntry(Driver driver, ExportOrder exportOrder, Truck truck,
 			LocalDateTime arrivalDate) {
@@ -44,7 +44,7 @@ public final class ExportValidation extends OrderValidation {
 
 	private static void validateTruckArrivalTime(ExportOrder exportOrder, LocalDateTime arrivalDate) {
 		if (!(Math.abs(arrivalDate.getHour() - exportOrder.getDateTruck().getHour()) > 3)) {
-			throw new RuntimeException("El horario difiere de más de 3 horas.");
+			throw new RuntimeException("El horario difiere de mï¿½s de 3 horas.");
 		}
 
 	}
@@ -57,7 +57,7 @@ public final class ExportValidation extends OrderValidation {
 
 	private static void validateTruckReportedByShipper(ExportOrder exportOrder, Truck truck) {
 		if (!truck.equals(exportOrder.getTruck())) {
-			throw new RuntimeException("El camión no es el informado por el shipper.");
+			throw new RuntimeException("El camiï¿½n no es el informado por el shipper.");
 		}
 	}
 

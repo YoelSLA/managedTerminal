@@ -9,12 +9,14 @@ import terminal.Terminal;
 
 public class Trip {
 
-	private LocalDateTime startDate;
-	private Ship ship;
 	private MaritimeCircuit maritimeCircuit;
+	private static Integer numTrip = 0;
+	private Ship ship;
+	private LocalDateTime startDate;
 
 	public Trip(MaritimeCircuit maritimeCircuit, Ship ship, LocalDateTime startDate) {
 		this.maritimeCircuit = maritimeCircuit;
+		Trip.numTrip = numTrip++;
 		this.ship = ship;
 		this.assginTrip(this, ship);
 		this.startDate = startDate;
@@ -23,10 +25,10 @@ public class Trip {
 	public LocalDateTime calculateArrivalDateToTerminal(Terminal terminal) {
 		// Se obtiene la terminal origen del circuito maritimo.
 		final Terminal originTerminal = maritimeCircuit.originTerminal();
-		// Se calcula las horas totales hasta la llegada a la terminal del parámetro.
+		// Se calcula las horas totales hasta la llegada a la terminal del parï¿½metro.
 		final Integer hoursToArrival = maritimeCircuit.calculateTotalHoursBetweenTerminals(originTerminal, terminal);
 		// Se suma las horas al startDate para obtener la fecha de llegada a la terminal
-		// del parámetro.
+		// del parï¿½metro.
 		return startDate.plus(hoursToArrival, ChronoUnit.HOURS);
 	}
 
@@ -47,9 +49,9 @@ public class Trip {
 	}
 
 	public Terminal nextTerminalOf(Terminal terminal) {
-		// Se obtiene el índice de la terminal del parámetro.
+		// Se obtiene el ï¿½ndice de la terminal del parï¿½metro.
 		final Integer indexTerminal = maritimeCircuit.originTerminals().indexOf(terminal);
-		// Se retorna la siguiente terminal del parámetro.
+		// Se retorna la siguiente terminal del parï¿½metro.
 		return maritimeCircuit.originTerminals().get(indexTerminal + 1);
 	}
 

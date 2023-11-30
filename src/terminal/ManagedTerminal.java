@@ -61,7 +61,7 @@ public class ManagedTerminal implements Terminal {
 
 	@Override
 	public Position getPosition() {
-		return new Position(-58.373877081937, -34.5795823299825);
+		return new Position(-34.5795823299825, -58.373877081937);
 	}
 
 	public Routing getRouting() {
