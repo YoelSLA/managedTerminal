@@ -11,6 +11,7 @@ import service.Service;
 import service.Washed;
 import trip.Trip;
 import truck.Truck;
+import turn.Turn;
 
 public abstract class Order {
 
@@ -22,6 +23,7 @@ public abstract class Order {
 	private List<Service> services;
 	private Trip trip;
 	private Truck truck;
+	private Turn turn;
 
 	public Order(Driver driver, Load load, Trip trip, Truck truck) {
 		this.bill = new Bill(this);
@@ -83,4 +85,13 @@ public abstract class Order {
 		return load.getVolume();
 	}
 
+	public Turn getTurn() {
+		return turn;
+	}
+
+	public void setTurn(Turn turn) {
+		this.turn = turn;
+	}
+	
+	
 }

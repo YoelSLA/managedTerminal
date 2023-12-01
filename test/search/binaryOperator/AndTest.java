@@ -123,7 +123,6 @@ class AndTest {
 	void testAAndIsCreated() {
 		assertEquals(leftClause, and.getLeftClause());
 		assertEquals(rightClause, and.getRightClause());
-
 	}
 
 	@Test

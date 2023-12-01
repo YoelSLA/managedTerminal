@@ -23,13 +23,17 @@ public class Trip {
 	}
 
 	public LocalDateTime calculateArrivalDateToTerminal(Terminal terminal) {
-		// Se obtiene la terminal origen del circuito maritimo.
+		// Se obtiene la terminal origen del circuito marítimo.
 		final Terminal originTerminal = maritimeCircuit.originTerminal();
-		// Se calcula las horas totales hasta la llegada a la terminal del par�metro.
+
+		// Se calcula las horas totales hasta la llegada a la terminal del parámetro.
 		final Integer hoursToArrival = maritimeCircuit.calculateTotalHoursBetweenTerminals(originTerminal, terminal);
+
 		// Se suma las horas al startDate para obtener la fecha de llegada a la terminal
-		// del par�metro.
-		return startDate.plus(hoursToArrival, ChronoUnit.HOURS);
+		// del parámetro.
+		LocalDateTime arrivalDate = startDate.plus(hoursToArrival, ChronoUnit.HOURS);
+
+		return arrivalDate;
 	}
 
 	public MaritimeCircuit getMaritimeCircuit() {

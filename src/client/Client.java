@@ -1,6 +1,8 @@
 package client;
 
-public abstract class Client {
+import mailSender.MailSender;
+
+public abstract class Client implements MailSender {
 
 	private int dni;
 	private String name;
@@ -16,6 +18,5 @@ public abstract class Client {
 	public String getName() {
 		return name;
 	}
-	
-	
+		
 }

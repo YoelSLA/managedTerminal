@@ -7,19 +7,16 @@ import org.junit.jupiter.api.Test;
 
 class OutboundTest {
 
-	private Outbound currentPhase; //SUT
-	private Inbound nextPhase; //DOC
-	
+	private Outbound outbound; //SUT
 	
 	@BeforeEach
 	void setUp() {
-		currentPhase = new Outbound();
-		nextPhase = new Inbound();
+		outbound = new Outbound();
 	}
 	
 	@Test
-	void getNextPhase() {
-		assertEquals(nextPhase.getClass(), currentPhase.nextPhase().getClass());  
-	}
+	void x() {
+		assertEquals(Inbound.class, outbound.nextPhase().getClass());  
+	}  
 
 }

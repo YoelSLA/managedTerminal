@@ -7,13 +7,9 @@ import order.ExportOrder;
 import terminal.ManagedTerminal;
 import truck.Truck;
 
-/**
- * Validador de �rdenes de exportaci�n. Implementa el algoritmo del m�todo
- * validation de su superclase.
- * 
- * @author Gabriela Fascetta | Yoel Ventoso
- */
 public final class ExportValidation extends OrderValidation {
+	
+
 
 //	public static void validateOrderFor(ExportOrder exportOrder, ManagedTerminal managedTerminal) {
 //		validateDriverOf(exportOrder, managedTerminal);
@@ -60,5 +56,7 @@ public final class ExportValidation extends OrderValidation {
 			throw new RuntimeException("El cami�n no es el informado por el shipper.");
 		}
 	}
+
+
 
 }

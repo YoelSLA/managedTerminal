@@ -1,14 +1,19 @@
 package phase;
 
-/** 
- * @author alejandrabesel
- * Clase abstracta que representa una fase del buque. 
- * Consta de un metodo abstracto que devolvera la proxima fase del buque representando los estados que éste puede tener desde
- * que da el preaviso de que esta cerca de la terminal, hasta que vuelve a salir luego de descargar.
- * Elegimos implementar las clases hijas como 'final' ya que en este dominio no nos interesa que los estados tengan herencia
- * */
+import ship.Ship;
 
-public interface Phase {
+public abstract class Phase {
 
-	public abstract Phase nextPhase();
+//	Phase nextPhase();
+//	
+//	Boolean canItMoveOnToTheNext(Ship ship);
+//
+//	void notifyToTerminal(Ship ship);
+//	
+//	if(phase.canItMoveOnToTheNext(this)) {
+//		setPhase(phase.nextPhase());
+//		phase.notifyToTerminal(this);
+//	}
+//
+//	void newPosition(Ship ship);
 }
