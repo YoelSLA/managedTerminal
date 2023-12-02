@@ -7,8 +7,11 @@ import client.Client;
 import terminal.ManagedTerminal;
 
 public interface MailSender {
-	
-	public void sendBill(ManagedTerminal managedTerminal, Client client, Bill bill);
-	
-	public void sendNotifyDepartureShip(ManagedTerminal managedTerminal, Client client, LocalDateTime departureDate);
+
+	public void sendMail(ManagedTerminal managedTerminal, Client client, Bill bill);
+
+	public void sendMail(ManagedTerminal managedTerminal, Client client, String string);
+
+	public void sendMail(ManagedTerminal managedTerminal, Client client, LocalDateTime date);
+
 }

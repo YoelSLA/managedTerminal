@@ -6,28 +6,27 @@ import bill.Bill;
 import terminal.ManagedTerminal;
 
 public class Shipper extends Client {
-	
-	private int dni;
-	private String name;
-	
-	public Shipper(int dni, String name) {
+
+	public Shipper(String dni, String name) {
 		super(dni, name);
 	}
 
-	public void sendEmail(Bill bill) {
+	@Override
+	public void sendMail(ManagedTerminal managedTerminal, Client client, Bill bill) {
 		// TODO Auto-generated method stub
+
 	}
 
 	@Override
-	public void sendBill(ManagedTerminal managedTerminal, Client client, Bill bill) {
+	public void sendMail(ManagedTerminal managedTerminal, Client client, String string) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public void sendNotifyDepartureShip(ManagedTerminal managedTerminal, Client client, LocalDateTime departureDate) {
+	public void sendMail(ManagedTerminal managedTerminal, Client client, LocalDateTime date) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 }
