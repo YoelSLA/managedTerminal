@@ -106,18 +106,48 @@ public class ManagedTerminal implements Terminal {
 	// SERVICE POR CLIENTS
 	// ------------------------------------------------------------
 
+	/**
+	 * Busca y filtra los viajes disponibles según los criterios proporcionados en
+	 * la búsqueda.
+	 *
+	 * @param search Objeto de búsqueda que contiene los criterios de búsqueda.
+	 * @return Lista de viajes filtrados según los criterios de búsqueda.
+	 */
 	public List<Trip> searchTrips(Search search) {
-		// Obtengo todos los viajes de cada una de los lineas navieras.
+		// Obtengo todos los viajes de cada una de las líneas navieras.
 		List<Trip> allTrips = shippingLines.stream().flatMap(s -> s.getTrips().stream()).toList();
+
+		// Filtrar los viajes según los criterios de búsqueda.
 		return search.filterTrips(allTrips);
 	}
 
+	/**
+	 * Calcula y devuelve la fecha de próxima salida hacia una terminal específica.
+	 *
+	 * @param terminal Terminal de destino.
+	 * @return Fecha de próxima salida hacia la terminal especificada.
+	 */
 	public LocalDateTime nextDepartureDateTo(Terminal terminal) {
+		// Implementar lógica para calcular la fecha de próxima salida.
+		// Se debe tener en cuenta los horarios de salida de los viajes hacia la
+		// terminal especificada.
+		// Retorna null si la lógica de cálculo no está implementada.
 		return null;
-
 	}
 
+	/**
+	 * Calcula y devuelve el tiempo estimado que tomará llegar a una terminal de
+	 * destino específica desde el inicio de una línea naviera.
+	 *
+	 * @param shippingLine Línea naviera desde la cual se inicia el viaje.
+	 * @param destiny      Terminal de destino.
+	 * @return Tiempo estimado en horas para llegar a la terminal de destino desde
+	 *         el inicio de la línea naviera.
+	 */
 	public Integer timeItTakesToGetTo(ShippingLine shippingLine, Terminal destiny) {
+		// Implementar la lógica para calcular el tiempo estimado de viaje desde el
+		// inicio de la línea naviera hasta la terminal de destino.
+		// Retorna null si la lógica de cálculo no está implementada.
 		return null;
 	}
 
@@ -145,84 +175,142 @@ public class ManagedTerminal implements Terminal {
 	// ------------------------------------------------------------
 	// PROCESS OF EXPORT ORDER
 	// ------------------------------------------------------------
+	/**
+	 * Contrata el servicio de exportación para una orden de exportación específica.
+	 *
+	 * @param exportOrder Orden de exportación para la cual se contrata el servicio.
+	 */
 	public void hireExportService(ExportOrder exportOrder) {
-		// Se verifica si el shipper esta registrado en la terminal gestionada, caso
-		// contrario se lo registra.
+		// Paso 1: Verificar si el shipper está registrado en la terminal
+		// gestionada; caso contrario, registrarlo.
 		registerShipperIfNew((Shipper) exportOrder.getClient());
-		// Se debe validar que el chofer y el camión esten registrados en la terminal
+
+		// Paso 2: Validar que el chofer y el camión estén registrados en la terminal
 		// gestionada.
 		ExportValidation.validateOrderInTerminal(this, exportOrder);
-		// Se le asigna al turno del shipper que contiene la fecha una estimación de 6
-		// horas antes de que llegue el buque a la
-		// terminal gestionada.
+
+		// Paso 3: Asignar al turno del shipper en una fecha estimada 6 horas
+		// antes de la llegada del buque a la terminal.
 		setTurnDateForExportOrder(exportOrder);
-		// Se registra la orden de exportación en la terminal gestionada.
+
+		// Paso 4: Registrar la orden de exportación en la terminal gestionada.
 		exportOrders.add(exportOrder);
 	}
 
+	/**
+	 * Registra la llegada de un camión con carga para una orden de exportación
+	 * específica.
+	 *
+	 * @param exportOrder   Orden de exportación para la cual se registra la llegada
+	 *                      del camión.
+	 * @param driver        Chofer que realiza la llegada del camión.
+	 * @param truck         Camión que llega con la carga.
+	 * @param dateToArrival Fecha en la que se realiza la llegada del camión.
+	 */
 	public void truckArrivedWithLoad(ExportOrder exportOrder, Driver driver, Truck truck, LocalDateTime dateToArrival) {
-		// Se debe validar que el chofer y el camión esten registrados en la terminal
+		// Paso 1: Validar que el chofer y el camión estén registrados en la terminal
 		// gestionada.
 		ExportValidation.validateOrderInTerminal(this, exportOrder);
-		// Se debe validar que el chofer y el camión sean los informados por el
-		// consginee.
+
+		// Paso 2: Validar que el chofer y el camión sean los informados por el
+		// consignee.
 		ExportValidation.validateDriverAndTruckWithClientInfo(exportOrder, driver, truck);
-		// Se debe validar que la hora del turno no difiera de más de 3 horas con la
+
+		// Paso 3: Validar que la hora del turno no difiera en más de 3 horas con la
 		// hora de llegada del camión.
 		ExportValidation.validateShiftTiming(exportOrder, dateToArrival);
-		// Se debe agregar el servicio de pesado para cualquier carga.
+
+		// Paso 4: Agregar el servicio de pesado para cualquier carga.
 		registerWeighService(exportOrder);
-		// Se debe agregar el servicio electrico solamente para el contenedor reefer.
+
+		// Paso 5: Agregar el servicio eléctrico solo para el contenedor Reefer.
 		registerEndOfElectricityService(List.of(exportOrder), dateToArrival);
 	}
 
+	/**
+	 * Registra un shipper en la lista de shippers si aún no está presente en dicha
+	 * lista.
+	 *
+	 * @param shipper Remitente a registrar.
+	 */
 	private void registerShipperIfNew(Shipper shipper) {
 		if (!shippers.contains(shipper)) {
-			shippers.add((Shipper) shipper);
+			shippers.add(shipper);
 		}
 	}
 
+	/**
+	 * Establece la fecha del turno para una orden de exportación.
+	 *
+	 * @param exportOrder Orden de exportación para la cual se establecerá la fecha
+	 *                    del turno.
+	 */
 	private void setTurnDateForExportOrder(ExportOrder exportOrder) {
+		// Calcular la fecha estimada de llegada a la terminal gestionada.
 		LocalDateTime estimatedArrival = exportOrder.getTrip().calculateArrivalDateToTerminal(this);
+		// Establecer la fecha del turno 6 horas antes de la fecha estimada de llegada.
 		exportOrder.getTurn().setDate(estimatedArrival.minus(6, ChronoUnit.HOURS));
 	}
 
 	// ------------------------------------------------------------
 	// PROCESS OF IMPORT ORDER
 	// ------------------------------------------------------------
+	/**
+	 * Contrata el servicio de importación para una orden de importación específica.
+	 *
+	 * @param importOrder Orden de importación para la cual se contrata el servicio.
+	 */
 	public void hireImportService(ImportOrder importOrder) {
-		// Se verifica si el consignee esta registrado en la terminal gestionada, caso
-		// contrario se lo registra.
-		registerConsgineeIfNew((Consignee) importOrder.getClient());
-		// Se debe validar que el chofer y el camiÃ³n esten registrados en la terminal
+		// Paso 1: Verificar si el consignee está registrado en la terminal
+		// gestionada; caso contrario, registrarlo.
+		registerConsigneeIfNew((Consignee) importOrder.getClient());
+		// Paso 2: Validar que el chofer y el camión estén registrados en la terminal
 		// gestionada.
 		ExportValidation.validateOrderInTerminal(this, importOrder);
-		// Se registra la orden de importación en la terminal gestionada.
+		// Paso 3: Registrar la orden de importación en la terminal gestionada.
 		importOrders.add(importOrder);
 	}
 
+	/**
+	 * Registra la salida del camión con una carga para una orden de importación
+	 * específica.
+	 *
+	 * @param importOrder   Orden de importación para la cual se registra la salida
+	 *                      del camión.
+	 * @param driver        Chofer que realiza la salida del camión.
+	 * @param truck         Camión que sale con la carga.
+	 * @param dateToArrival Fecha en la que se realiza la salida del camión.
+	 */
 	public void truckLeaveWithLoad(ImportOrder importOrder, Driver driver, Truck truck, LocalDateTime dateToArrival) {
-		// Se debe validar que el chofer y el camión esten registrados en la terminal
+		// Paso 1: Validar que el chofer y el camión estén registrados en la terminal
 		// gestionada.
 		ImportValidation.validateOrderInTerminal(this, importOrder);
-		// Se debe validar que el chofer y el camión sean los informados por el
-		// consginee.
+
+		// Paso 2: Validar que el chofer y el camión sean los informados por el
+		// consignee.
 		ImportValidation.validateDriverAndTruckWithClientInfo(importOrder, driver, truck);
-		// Se le registra el servicio de exceso de almacenamiento si corresponde.
+
+		// Paso 3: Registrar el servicio de exceso de almacenamiento si corresponde.
 		registerExcessStorageService(importOrder, dateToArrival);
-		// Se le debe registar el fin del servicio de electricidad, solamente a las
-		// ordenes que tenga una carga Reefer.
+
+		// Paso 4: Registrar el fin del servicio de electricidad, solo para órdenes con
+		// carga Reefer.
 		registerEndOfElectricityService(List.of(importOrder), dateToArrival);
-		// Se le enviara la facturación con el desglose de los servicios aplicados con
-		// la fecha y el monto de cada uno.
-		// Ademas, de la facturación del viaje en si mismo, que consta de la sumatoria
-		// de todos los tramos realizados por el buque para la entrega correspondiente.
+
+		// Paso 5: Enviar la facturación con el desglose de los servicios y la
+		// facturación del viaje.
 		sendBilling(importOrder);
 	}
 
-	private void registerConsgineeIfNew(Consignee consginee) {
-		if (!consignees.contains(consginee)) {
-			consignees.add(consginee);
+	/**
+	 * Registra un consignee en la lista de consginees si aún no está presente en
+	 * dicha lista.
+	 *
+	 * @param consignee Consginee a registrar.
+	 */
+	private void registerConsigneeIfNew(Consignee consignee) {
+		if (!consignees.contains(consignee)) {
+			consignees.add(consignee);
 		}
 	}
 
