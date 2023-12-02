@@ -115,7 +115,7 @@ class ArrivalDateTest {
 	void testAArrivalDateIsCreated() {
 		assertEquals(Criteria.EQUALS, arrivalDate.getCriteria());
 		assertEquals(LocalDateTime.of(2023, 11, 26, 20, 0), arrivalDate.getDateForSearch());
-		assertEquals(quito, arrivalDate.getDestiny());
+		assertEquals(quito, arrivalDate.getTerminal());
 	}
 
 	@Test

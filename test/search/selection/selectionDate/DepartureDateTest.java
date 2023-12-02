@@ -120,7 +120,7 @@ class DepartureDateTest {
 	void testADepartureDateIsCreated() {
 		assertEquals(Criteria.EQUALS, departureDate.getCriteria());
 		assertEquals(dateForSearch, departureDate.getDateForSearch());
-		assertEquals(buenosAires, departureDate.getOrigin());
+		assertEquals(buenosAires, departureDate.getTerminal());
 	}
 
 	@Test

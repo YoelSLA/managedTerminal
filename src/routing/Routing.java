@@ -8,7 +8,7 @@ import terminal.Terminal;
 
 public abstract class Routing {
 
-	public abstract MaritimeCircuit bestCircuitBetween(ManagedTerminal origin, Terminal destin,
+	public abstract MaritimeCircuit bestCircuitBetween(ManagedTerminal origin, Terminal destiny,
 			List<MaritimeCircuit> maritimeCircuits);
 
 	protected abstract Double calculateRouting(ManagedTerminal origin, Terminal destiny,

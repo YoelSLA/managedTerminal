@@ -1,51 +1,54 @@
 package load;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-/**
- * Test de unidad para la clase Dry (SUT).
- * @author Gabriela Fascetta
- */
 class DryTest {
 
-	Double widthA = 5.0;
-	Double heightA = 2.0;
-	Double lengthA = 8.0;
-	Double weightA = 50.0;
-	Dry dryA = new Dry(widthA,heightA,lengthA,weightA);
-	
-	
-	Double widthB = 4.0;
-	Double heightB = 3.0;
-	Double lengthB = 10.0;
-	Double weightB = 120.0;
-	Dry dryB = new Dry(widthB,heightB,lengthB,weightB);
-	
-	
-	@Test
-	void testInicializationClassReefer() {
-		//reeferA
-		assertEquals(widthA, dryA.getWidth());
-		assertEquals(heightA, dryA.getHeight());
-		assertEquals(lengthA, dryA.getLength());
-		assertEquals(weightA, dryA.getWeight());
-		assertEquals(0, dryA.getEnergyConsumption());
-		//reeferB
-		assertEquals(widthB, dryB.getWidth());
-		assertEquals(heightB, dryB.getHeight());
-		assertEquals(lengthB, dryB.getLength());
-		assertEquals(weightB, dryB.getWeight());
-		assertEquals(0, dryB.getEnergyConsumption());
-	}
-	
-	@Test
-	void testVolume() {
-		Double expectedValueA = dryA.getWidth()*dryA.getLength()*dryA.getHeight();
-		assertEquals(expectedValueA, dryA.getVolume());
-		Double expectedValueB = dryB.getWidth()*dryB.getLength()*dryB.getHeight();
-		assertEquals(expectedValueB, dryB.getVolume());
+	private Double height;
+	private Double length;
+	private Double width;
+	private Double weight;
+	private Dry dry;
+
+	@BeforeEach
+	void setUp() {
+		height = 100.0;
+		length = 300.0;
+		width = 200.0;
+		weight = 20.000;
+		dry = new Dry(height, length, width, weight);
 	}
 
+	@Test
+	void testCodeIsOne() {
+		assertEquals(1, dry.getCode());
+	}
+
+	@Test
+	void testHeight() {
+		assertEquals(height, dry.getHeight());
+	}
+
+	@Test
+	void testLength() {
+		assertEquals(length, dry.getLength());
+	}
+
+	@Test
+	void testVolumeCalculation() {
+		assertEquals(height * length * width, dry.getVolume());
+	}
+
+	@Test
+	void testWeight() {
+		assertEquals(weight, dry.getWeight());
+	}
+
+	@Test
+	void testWidth() {
+		assertEquals(width, dry.getWidth());
+	}
 }

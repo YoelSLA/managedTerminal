@@ -15,13 +15,8 @@ public class ArrivalDate extends SelectionDate {
 
 	@Override
 	public List<Trip> filterTrips(List<Trip> trips) {
-		return trips.stream().filter(
-				t -> t.hasATerminal(terminal) && this.searchByCriteriaTo(t.calculateArrivalDateToTerminal(terminal)))
-				.toList();
-	}
-
-	public Terminal getDestiny() {
-		return terminal;
+		return trips.stream().filter(t -> t.hasATerminal(getTerminal())
+				&& this.searchByCriteriaTo(t.calculateArrivalDateToTerminal(getTerminal()))).toList();
 	}
 
 }

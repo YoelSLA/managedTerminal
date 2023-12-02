@@ -2,51 +2,69 @@ package load;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-/**
- * Test de unidad para la clase Reefer (SUT).
- * 
- * @author Gabriela Fascetta
- */
 class ReeferTest {
 
-	Double widthA = 5.0;
-	Double heightA = 2.0;
-	Double lengthA = 8.0;
-	Double weightA = 50.0;
-	int energyA = 100;
-	Reefer reeferA = new Reefer(widthA, heightA, lengthA, weightA, energyA);
+	private Double height;
+	private Double length;
+	private Double width;
+	private Double weight;
+	private Double consumptionkWh;
+	private Reefer reefer;
 
-	Double widthB = 4.0;
-	Double heightB = 3.0;
-	Double lengthB = 10.0;
-	Double weightB = 120.0;
-	int energyB = 150;
-	Reefer reeferB = new Reefer(widthB, heightB, lengthB, weightB, energyB);
-
-	@Test
-	void testInicializationClassReefer() {
-		// reeferA
-		assertEquals(widthA, reeferA.getWidth());
-		assertEquals(heightA, reeferA.getHeight());
-		assertEquals(lengthA, reeferA.getLength());
-		assertEquals(weightA, reeferA.getWeight());
-		assertEquals(energyA, reeferA.getEnergyConsumption());
-		// reeferB
-		assertEquals(widthB, reeferB.getWidth());
-		assertEquals(heightB, reeferB.getHeight());
-		assertEquals(lengthB, reeferB.getLength());
-		assertEquals(weightB, reeferB.getWeight());
-		assertEquals(energyB, reeferB.getEnergyConsumption());
-
+	@BeforeEach
+	void setUp() {
+		height = 100.0;
+		length = 300.0;
+		width = 200.0;
+		weight = 20.000;
+		consumptionkWh = 40.0;
+		reefer = new Reefer(height, length, width, weight, consumptionkWh);
 	}
 
 	@Test
-	void testVolume() {
-		Double expectedValueA = reeferA.getWidth() * reeferA.getLength() * reeferA.getHeight();
-		assertEquals(expectedValueA, reeferA.getVolume());
-		Double expectedValueB = reeferB.getWidth() * reeferB.getLength() * reeferB.getHeight();
-		assertEquals(expectedValueB, reeferB.getVolume());
+	void testCodeIsTwo() {
+		assertEquals(2, reefer.getCode());
 	}
+
+	@Test
+	void testHeight() {
+		assertEquals(height, reefer.getHeight());
+	}
+
+	@Test
+	void testLength() {
+		assertEquals(length, reefer.getLength());
+	}
+
+	@Test
+	void testVolumeCalculation() {
+		assertEquals(height * length * width, reefer.getVolume());
+	}
+
+	@Test
+	void testWeight() {
+		assertEquals(weight, reefer.getWeight());
+	}
+
+	@Test
+	void testWidth() {
+		assertEquals(width, reefer.getWidth());
+	}
+
+	@Test
+	void testCompustionkWh() {
+		assertEquals(consumptionkWh, reefer.getConsumptionkWh());
+	}
+
+	@Test
+	void setConsumptionAndGetConsumptionkWh() {
+		// Exercise
+		reefer.setConsumption(50.0);
+		// Assert
+		assertEquals(50.0, reefer.getConsumptionkWh());
+	}
+
 }

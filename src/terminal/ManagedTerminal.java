@@ -4,23 +4,30 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import client.Client;
 import client.Consignee;
 import client.Shipper;
 import driver.Driver;
+import load.Load;
 import order.ExportOrder;
 import order.ImportOrder;
+import order.Order;
 import orderValidation.ExportValidation;
 import orderValidation.ImportValidation;
 import position.Position;
 import routing.Routing;
 import search.Search;
+import service.Electricity;
+import service.ExcessStorage;
+import service.Washed;
+import service.Weigh;
 import ship.Ship;
 import shippingLine.ShippingLine;
 import trip.Trip;
 import truck.Truck;
 import truckTransportCompany.TruckTransportCompany;
-import turn.Turn;
 
 public class ManagedTerminal implements Terminal {
 
@@ -31,7 +38,11 @@ public class ManagedTerminal implements Terminal {
 	private List<Shipper> shippers;
 	private List<ShippingLine> shippingLines;
 	private List<TruckTransportCompany> truckTransportCompanies;
-	private List<Turn> turns;
+	private Double weighingCost;
+	private Double costPerKw;
+	private Double excessStorageCost;
+	private Double costPerSmallLoad;
+	private Double costPerBigLoad;
 
 	public ManagedTerminal(Routing routing) {
 		this.consignees = new ArrayList<Consignee>();
@@ -41,7 +52,9 @@ public class ManagedTerminal implements Terminal {
 		this.shippers = new ArrayList<Shipper>();
 		this.shippingLines = new ArrayList<ShippingLine>();
 		this.truckTransportCompanies = new ArrayList<TruckTransportCompany>();
-		this.turns = new ArrayList<Turn>();
+		this.weighingCost = 0.0;
+		this.setCostPerKw(0.0);
+		this.excessStorageCost = 0.0;
 	}
 
 	// ----------------------------------
@@ -86,10 +99,6 @@ public class ManagedTerminal implements Terminal {
 		return truckTransportCompanies;
 	}
 
-	public List<Turn> getTurns() {
-		return turns;
-	}
-
 	// ------------------------------------------------------------
 	// SERVICE POR CLIENTS
 	// ------------------------------------------------------------
@@ -105,9 +114,8 @@ public class ManagedTerminal implements Terminal {
 
 	}
 
-	public LocalDateTime timeItTakesToGetTo(ShippingLine shippingLine, Terminal destiny) {
+	public Integer timeItTakesToGetTo(ShippingLine shippingLine, Terminal destiny) {
 		return null;
-
 	}
 
 	// ------------------------------------------------------------
@@ -134,78 +142,74 @@ public class ManagedTerminal implements Terminal {
 	// ------------------------------------------------------------
 	// PROCESS OF EXPORT ORDER
 	// ------------------------------------------------------------
-
 	public void hireExportService(ExportOrder exportOrder) {
 		// Se verifica si el shipper esta registrado en la terminal gestionada, caso
 		// contrario se lo registra.
-		registerShipperIfNew(exportOrder.getShipper());
+		registerShipperIfNew((Shipper) exportOrder.getClient());
 		// Se debe validar que el chofer y el camión esten registrados en la terminal
 		// gestionada.
-		ExportValidation.validateOrderWithDriverAndTruckInTerminal(this, exportOrder.getDriver(),
-				exportOrder.getTruck());
-		// Se le asgina un turno al shipper de 6 horas antes de que llegue el buque a la
+		ExportValidation.validateOrderInTerminal(this, exportOrder);
+		// Se le asigna al turno del shipper que contiene la fecha una estimación de 6
+		// horas antes de que llegue el buque a la
 		// terminal gestionada.
-//		System.out.println(exportOrder);
-//		System.out.println(exportOrder.getTrip());
-//		System.out.println(exportOrder.getTrip().calculateArrivalDateToTerminal(this));
-		Turn turnToAssgin = new Turn(exportOrder.getDriver(), exportOrder.getTruck(),
-				exportOrder.getTrip().calculateArrivalDateToTerminal(this).minus(6, ChronoUnit.HOURS));
-		// Se le asigna el turno a la orden de exportación.
-		exportOrder.setTurn(turnToAssgin);
-		// Se registra el turno en la terminal gestionada.
-		registerTurn(turnToAssgin);
+		exportOrder.getTurn()
+				.setDate(exportOrder.getTrip().calculateArrivalDateToTerminal(this).minus(6, ChronoUnit.HOURS));
 		// Se registra la orden de exportación en la terminal gestionada.
 		exportOrders.add(exportOrder);
 	}
-	
+
 	public void truckArrivedWithLoad(ExportOrder exportOrder, Driver driver, Truck truck, LocalDateTime dateToArrival) {
 		// Se debe validar que el chofer y el camión esten registrados en la terminal
 		// gestionada.
-		ImportValidation.validateOrderWithDriverAndTruckInTerminal(this, driver, truck);
+		ExportValidation.validateOrderInTerminal(this, exportOrder);
 		// Se debe validar que el chofer y el camión sean los informados por el
 		// consginee.
-		ImportValidation.validateDriverAndTruckWithClientInfo(exportOrder, driver, truck);
+		ExportValidation.validateDriverAndTruckWithClientInfo(exportOrder, driver, truck);
+		// Se debe validar que la hora del turno no difiera de más de 3 horas con la
+		// hora de llegada del camión.
+		ExportValidation.validateShiftTiming(exportOrder, dateToArrival);
+		// Se debe agregar el servicio de pesado para cualquier carga.
+		registerWeighService(exportOrder);
+		// Se debe agregar el servicio electrico solamente para el contenedor reefer.
+		registerElectricityService(exportOrder, dateToArrival);
 	}
-	
+
 	private void registerShipperIfNew(Shipper shipper) {
 		if (!shippers.contains(shipper)) {
-			shippers.add(shipper);
+			shippers.add((Shipper) shipper);
 		}
 	}
 
-	public void registerTurn(Turn turn) {
-		turns.add(turn);
-	}
-	
 	// ------------------------------------------------------------
 	// PROCESS OF IMPORT ORDER
 	// ------------------------------------------------------------
-
 	public void hireImportService(ImportOrder importOrder) {
 		// Se verifica si el consignee esta registrado en la terminal gestionada, caso
 		// contrario se lo registra.
-		registerConsigneeIfNew(importOrder.getConsignee());
-		// Se debe validar que el chofer y el camión esten registrados en la terminal
+		registerConsigneeIfNew((Consignee) importOrder.getClient());
+		// Se debe validar que el chofer y el camiÃ³n esten registrados en la terminal
 		// gestionada.
-		ExportValidation.validateOrderWithDriverAndTruckInTerminal(this, importOrder.getDriver(),
-				importOrder.getTruck());
-		
+		ExportValidation.validateOrderInTerminal(this, importOrder);
+		// Se registra la orden de importación en la terminal gestionada.
+		importOrders.add(importOrder);
 	}
-	
+
 	public void truckLeaveWithLoad(ImportOrder importOrder, Driver driver, Truck truck, LocalDateTime dateToArrival) {
 		// Se debe validar que el chofer y el camión esten registrados en la terminal
 		// gestionada.
-		ImportValidation.validateOrderWithDriverAndTruckInTerminal(this, driver, truck);
+		ImportValidation.validateOrderInTerminal(this, importOrder);
 		// Se debe validar que el chofer y el camión sean los informados por el
 		// consginee.
 		ImportValidation.validateDriverAndTruckWithClientInfo(importOrder, driver, truck);
+		// Se le registra el servicio de exceso de almacenamiento si corresponde.
+		registerExcessStorageService(importOrder, dateToArrival);
 		// Se le enviara la facturación con el desglose de los servicios aplicados con
 		// la fecha y el monto de cada uno.
 		// Ademas, de la facturación del viaje en si mismo, que consta de la sumatoria
 		// de todos los tramos realizados por el buque para la entrega correspondiente.
-		importOrder.getConsignee().sendBill(this, importOrder.getConsignee(), importOrder.getBill());
+		importOrder.getClient().sendBill(this, importOrder.getClient(), importOrder.getBill());
 	}
-	
+
 	private void registerConsigneeIfNew(Consignee consignee) {
 		if (!consignees.contains(consignee)) {
 			consignees.add(consignee);
@@ -215,47 +219,46 @@ public class ManagedTerminal implements Terminal {
 	// ------------------------------------------------------------
 	// SHIP COMMMUNICATION
 	// ------------------------------------------------------------
-
 	@Override
 	public void notifyShipArrival(Ship ship) {
 
+//		ship.startWorking();
+
+		// Se debe obtener la fecha en la que llego el buque a la terminal gestionada.
+		LocalDateTime arrivalDateShip = ship.getTrip().calculateArrivalDateToTerminal(this);
+
+		// Cuando el buque arriba en la terminal gestionada, se le debe agregar a las
+		// ordenes de importación el servicio electrico, solamente si la orden tiene una
+		// carga Reefer.
+		importOrders.stream().filter(i -> i.getLoad().equals(2))
+				.forEach(i -> i.registerService(new Electricity(costPerKw, arrivalDateShip)));
+
+		// Se le debe agregar a todas las ordenes de importación la hora para el turno,
+		// que sera 6 horas despues de que haya llegado el buque a la terminal
+		// gestionada.
+		importOrders.stream().forEach(i -> i.getTurn().setDate(arrivalDateShip.plus(6, ChronoUnit.HOURS)));
+
+		// Cuando el buque arriba en la terminal gestionada, se le debe agregar a las
+		// ordenes de exportación al servicio electrico, la fecha en que finaliza el
+		// servicio.
+		List<Electricity> electricitys = exportOrders.stream().flatMap(i -> i.getServices().stream())
+				.filter(s -> s.getName().equals("Electricity")).map(s -> (Electricity) s).collect(Collectors.toList());
+		electricitys.forEach(e -> e.setEndConnection(arrivalDateShip));
+
+		// Se le informa al barco su partida.
+//		ship.depart();
 	}
 
 	@Override
 	public void notifyShipDeparture(Ship ship) {
-		// Cuando el buque pasa a estado “outbound” por haberse retirado de la terminal,
-		// se
-		// envía la factura vía mail con el desglose de servicios aplicados, fecha y
-		// monto de cada uno
-		// (a partir de la que se desprende el monto total facturado) a quien deba
-		// afrontar los costos
-		// de los mismos. Este responsable del pago será el shipper para la fase de
-		// exportación y el
-		// consignee para la fase de importación.
-		// Además de la facturación de servicios, al consignee se le debe agregar la
-		// facturación del viaje en sí mismo, que consta de la sumatoria del precio de
-		// todos los tramos
-		// realizados por el buque para la entrega de la carga correspondiente.
-
-		// Se le debe agregar la facturación con el desglose de los servicios aplicados
-		// con la fecha y monto de cada uno.
-		// PREGUNTA: Con la fecha se refiere a la fecha en el que el servicio fue
-		// contratado o a la fecha en la que llego el buque?.
-
+		// Se le envia la factura con los gastos a cada cliente de cada orden de
+		// exportación.
 		exportOrders.stream().filter(e -> e.getTrip().equals(ship.getTrip()))
-				.forEach(i -> i.getShipper().sendBill(this, i.getShipper(), i.getBill()));
-
-		exportOrders.stream().filter(e -> e.getTrip().equals(ship.getTrip()))
-				.forEach(i -> i.getShipper().sendBill(this, i.getShipper(), i.getBill()));
-
-		importOrders.stream().filter(e -> e.getTrip().equals(ship.getTrip())).forEach(i -> i.getConsignee()
-				.sendNotifyDepartureShip(this, i.getConsignee(), i.getTrip().calculateArrivalDateToTerminal(this)));
-		// PREGUNTA: Esto se debe hacer cuando el camión retire la carga de la terminal?
-		// Porque no tiene sentido que cuando llegue el buque se le envie la factura, ya
-		// que si se demora en retirar la carga, se le cobra el servicio por
-		// almacenamiento excendente. (La terminal )
-		// -----------------------
-
+				.forEach(e -> e.getClient().sendBill(this, e.getClient(), e.getBill()));
+		// Se le avisa a todos los consignees que su carga llego en la determinada
+		// fecha.
+		importOrders.stream().filter(e -> e.getTrip().equals(ship.getTrip())).forEach(i -> i.getClient()
+				.sendNotifyDepartureShip(this, i.getClient(), i.getTrip().calculateArrivalDateToTerminal(this)));
 	}
 
 	@Override
@@ -283,6 +286,54 @@ public class ManagedTerminal implements Terminal {
 		return truckTransportCompanies.stream().flatMap(t -> t.getTrucks().stream()).distinct().toList();
 	}
 
+	// ------------------------------------------------------------
+	// SERVICES
+	// ------------------------------------------------------------
+	public void hireWashedServiceFor(Load load, Client client) {
+		// Se crea una lista con todas las ordenes de la terminalg gestonada.
+		List<Order> orders = new ArrayList<>();
+		orders.addAll(exportOrders);
+		orders.addAll(importOrders);
 
+		// Se debe buscar la orden que corresponde para la carga y el cliente.
+		Order order = orders.stream().filter(o -> o.getClient().equals(client)).findFirst().get();
+		// Se registra el servicio de lavado en la orden.
+		order.registerService(new Washed(costPerBigLoad, costPerSmallLoad));
+	}
+
+	private void registerExcessStorageService(Order order, LocalDateTime dateToArrival) {
+		// Se obtiene la fecha en la cual el buque llego a la terminal destino (en este
+		// caso la gestionada).
+		LocalDateTime dateArrivedShip = order.getTrip().calculateArrivalDateToTerminal(this);
+		// Se calcula las horas que estuvo la carga en la terminal gestionada.
+		Integer hours = (int) ChronoUnit.HOURS.between(dateArrivedShip, dateToArrival);
+		// Si supero las 24 horas, se le crea y añade el servicio a la orden.
+		if (hours > 24) {
+			// Se le agrega las horas que estuvo en la terminal siendo 24 - (las horas que
+			// estuvo en la terminal).
+			// A partir de las 24 horas se le empieza a cobrar cada hora por la estadia.
+			order.registerService(new ExcessStorage(excessStorageCost, 24 - hours));
+		}
+	}
+
+	private void registerElectricityService(Order order, LocalDateTime dateToStartService) {
+		// Se pregunta si la carga es un Reefer, si lo es se le agrega el servicio
+		// electrico.
+		if (order.getLoad().getName().equals("Reefer")) {
+			order.registerService(new Electricity(costPerKw, dateToStartService));
+		}
+	}
+
+	private void registerWeighService(Order order) {
+		order.registerService(new Weigh(weighingCost));
+	}
+
+	public void setWeighingCost(Double weighingCost) {
+		this.weighingCost = weighingCost;
+	}
+
+	public void setCostPerKw(Double costPerKw) {
+		this.costPerKw = costPerKw;
+	}
 
 }

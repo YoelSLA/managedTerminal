@@ -1,15 +1,9 @@
 package terminal;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.Duration;
@@ -24,11 +18,15 @@ import org.junit.jupiter.api.Test;
 import client.Consignee;
 import client.Shipper;
 import driver.Driver;
+import load.Dry;
+import load.Reefer;
 import maritimeCircuit.MaritimeCircuit;
 import order.ExportOrder;
 import order.ImportOrder;
 import position.Position;
 import routing.Routing;
+import service.Electricity;
+import service.Weigh;
 import ship.Ship;
 import shippingLine.ShippingLine;
 import stretch.Stretch;
@@ -77,10 +75,21 @@ class ManagedTerminalTest {
 	private Shipper ivan;
 	// ------------------------------------------------------------
 	private Driver alberto;
+	private Driver luis;
 	// ------------------------------------------------------------
 	private Truck volvo;
+	private Truck scania;
 	// ------------------------------------------------------------
 	private TruckTransportCompany transportVesprini;
+	// ------------------------------------------------------------
+	private Turn turnExportOrder;
+	private Turn turnImportOrder;
+	// ------------------------------------------------------------
+	private Reefer reefer;
+	private Dry dry;
+	// ------------------------------------------------------------
+	private Electricity electricity;
+	private Weigh weigh;
 	// ------------------------------------------------------------
 	private ExportOrder exportOrder;
 	// ------------------------------------------------------------
@@ -90,6 +99,9 @@ class ManagedTerminalTest {
 
 	@BeforeEach
 	void setUp() {
+		// ROUTING
+		ferFewerIntermediateTerminals = mock(Routing.class);
+		// ------------------------------------------------------------------------------------------
 		// MANAGED TERMINAL
 		buenosAires = new ManagedTerminal(ferFewerIntermediateTerminals);
 		// ------------------------------------------------------------------------------------------
@@ -180,7 +192,8 @@ class ManagedTerminalTest {
 		// ------------------------------------------------------------------------------------------
 		// TRIP
 		tripOne = mock(Trip.class);
-		when(tripOne.getStartDate()).thenReturn(LocalDateTime.of(2023, Month.NOVEMBER, 12, 12, 0)); // 12-11-23 | 12:00 Hs.
+		when(tripOne.getStartDate()).thenReturn(LocalDateTime.of(2023, Month.NOVEMBER, 12, 12, 0)); // 12-11-23 | 12:00
+																									// Hs.
 		when(tripOne.getMaritimeCircuit()).thenReturn(maritimeCircuitOne);
 		when(tripOne.getShip()).thenReturn(bismarck);
 		when(tripOne.calculateArrivalDateToTerminal(buenosAires))
@@ -215,121 +228,295 @@ class ManagedTerminalTest {
 		// ------------------------------------------------------------------------------------------
 		// DRIVER
 		alberto = mock(Driver.class);
+		luis = mock(Driver.class);
 		// ------------------------------------------------------------------------------------------
 		// TRUCK
 		volvo = mock(Truck.class);
+		scania = mock(Truck.class);
 		// ------------------------------------------------------------------------------------------
 		// TRUCK TRANSPORT COMPANY
 		transportVesprini = mock(TruckTransportCompany.class);
 		when(transportVesprini.getDrivers()).thenReturn(Arrays.asList(alberto));
 		when(transportVesprini.getTrucks()).thenReturn(Arrays.asList(volvo));
 		// ------------------------------------------------------------------------------------------
+		// REEFER
+		dry = mock(Dry.class);
+		when(dry.getName()).thenReturn("Dry");
+
+		reefer = mock(Reefer.class);
+		when(reefer.getName()).thenReturn("Reefer");
+		// ------------------------------------------------------------------------------------------
+		electricity = mock(Electricity.class);
+		when(electricity.getPrice()).thenReturn(2000.0);
+		when(electricity.getStartConnection()).thenReturn(LocalDateTime.of(2023, Month.NOVEMBER, 12, 12, 00));
+
+		weigh = mock(Weigh.class);
+		when(weigh.getPrice()).thenReturn(1000.0);
+		// ------------------------------------------------------------------------------------------
+		// TURN
+		turnExportOrder = mock(Turn.class);
+		when(turnExportOrder.getDriver()).thenReturn(alberto);
+		when(turnExportOrder.getTruck()).thenReturn(volvo);
+		when(turnExportOrder.getDate()).thenReturn(LocalDateTime.of(2023, Month.NOVEMBER, 12, 06, 00)); // 12-11-23 |
+																										// 06:00
+		turnImportOrder = mock(Turn.class);
+		when(turnImportOrder.getDriver()).thenReturn(alberto);
+		when(turnImportOrder.getTruck()).thenReturn(volvo);
+		// ------------------------------------------------------------------------------------------
 		// EXPORT ORDER
 		exportOrder = mock(ExportOrder.class);
-		when(exportOrder.getShipper()).thenReturn(ivan);
-		when(exportOrder.getDriver()).thenReturn(alberto);
-		when(exportOrder.getTruck()).thenReturn(volvo);
+		when(exportOrder.getClient()).thenReturn(ivan);
+		when(exportOrder.getTurn()).thenReturn(turnExportOrder);
+		when(exportOrder.getLoad()).thenReturn(dry);
 		when(exportOrder.getTrip()).thenReturn(tripOne);
 		// ------------------------------------------------------------------------------------------
 		// IMPORT ORDER
 		importOrder = mock(ImportOrder.class);
-		when(importOrder.getConsignee()).thenReturn(yoel);
-		when(importOrder.getDriver()).thenReturn(alberto);
-		when(importOrder.getTruck()).thenReturn(volvo);
+		when(importOrder.getClient()).thenReturn(yoel);
+		when(importOrder.getTurn()).thenReturn(turnImportOrder);
+		when(importOrder.getLoad()).thenReturn(reefer);
 		when(importOrder.getTrip()).thenReturn(tripTwo);
-		// ------------------------------------------------------------------------------------------
-		// ROUTING
-		ferFewerIntermediateTerminals = mock(Routing.class);
-		// ------------------------------------------------------------------------------------------
-
 	}
 
 	// ------------------------------------------------------------
 	// INITIALIZE MANAGED TERMINAL
 	// ------------------------------------------------------------
 	@Test
-	void testInitializeTerminal_ConsignedEntities_ShouldHaveEmptyConsigneesList() {
+	void testShouldHaveNoConsigneesInitially() {
 		assertEquals(0, buenosAires.getConsignees().size());
 	}
 
 	@Test
-	void testInitializeTerminal_ConsignedEntities_ShouldHaveEmptyExportOrdersList() {
+	void testShouldHaveNoExportOrdersInitially() {
 		assertEquals(0, buenosAires.getExportOrders().size());
 	}
 
 	@Test
-	void tesIinitializeTerminal_ConsignedEntities_ShouldHaveEmptyShippersList() {
+	void testShouldHaveNoImportOrdersInitially() {
+		assertEquals(0, buenosAires.getImportOrders().size());
+	}
+
+	@Test
+	void testShouldHaveCorrectRoutingTerminalsInitially() {
+		assertEquals(ferFewerIntermediateTerminals, buenosAires.getRouting());
+	}
+
+	@Test
+	void testShouldHaveNoShippersInitially() {
 		assertEquals(0, buenosAires.getShippers().size());
 	}
 
 	@Test
-	void testInitializeTerminal_ConsignedEntities_ShouldHaveEmptyShippingLinesList() {
+	void testShouldHaveNoShippingLinesInitially() {
 		assertEquals(0, buenosAires.getShippingLines().size());
 	}
 
 	@Test
-	void testInitializeTerminal_ConsignedEntities_ShouldHaveEmptyTruckTransportCompaniesList() {
+	void testShouldHaveNoTruckTransportCompaniesInitially() {
 		assertEquals(0, buenosAires.getTruckTransportCompanies().size());
 	}
 
 	@Test
-	void testInitializeTerminal_ConsignedEntities_ShouldHaveEmptyTurnsList() {
-		assertEquals(0, buenosAires.getTurns().size());
-	}
-
-	@Test
-	void testInitializeTerminal_Name_ShouldBeExpectedName() {
+	void testShouldHaveCorrectName() {
 		assertEquals("Puerto de Buenos Aires", buenosAires.getName());
 	}
 
 	@Test
-	void testInitializeTerminal_Position_ShouldHaveExpectedAltitudeAndLatitude() {
+	void testShouldHaveCorrectPosition() {
 		assertEquals(-34.5795823299825, buenosAires.getPosition().getLatitude());
 		assertEquals(-58.373877081937, buenosAires.getPosition().getLongitude());
 	}
 
-//	void testInitializeTerminal_Details_ShouldHaveExpectedRouting() {
-//		assertEquals(ferFewerIntermediateTerminals, buenosAires.getRouting());
-//	}
-//
-//	void testInitializeTerminal_Details_ShouldHaveTrackerOfExpectedType() {
-//		assertEquals(Tracker.class, buenosAires.getTracker().getClass());
-//	}
+	// ------------------------------------------------------------
+	// REGISTRATION METHODS
+	// ------------------------------------------------------------
+	@Test
+	void testRegisteringConsigneeShouldAddToConsigneesList() {
+		// Exercise
+		buenosAires.registerConsignee(yoel);
+		// Assert
+		assertEquals(List.of(yoel), buenosAires.getConsignees());
+	}
+
+	@Test
+	void testRegisteringShipperShouldAddToShippersList() {
+		// Exercise
+		buenosAires.registerShipper(ivan);
+		// Assert
+		assertEquals(List.of(ivan), buenosAires.getShippers());
+	}
+
+	@Test
+	void testRegisteringShippingCompanyShouldAddToShippingLinesList() {
+		// Exercise
+		buenosAires.registerShippingCompany(apmMaersk);
+		// Assert
+		assertEquals(List.of(apmMaersk), buenosAires.getShippingLines());
+	}
+
+	@Test
+	void testRegisteringTruckTransportCompanyShouldAddToTruckTransportCompaniesList() {
+		// Exercise
+		buenosAires.registerTruckTransportCompany(transportVesprini);
+		// Assert
+		assertEquals(List.of(transportVesprini), buenosAires.getTruckTransportCompanies());
+	}
 
 	// ------------------------------------------------------------
 	// PROCESS OF EXPORT ORDER
 	// ------------------------------------------------------------
-	
 	@Test
-	void should_HireExportService_AndAddShipper() {
-	    // Set Up
-	    buenosAires.registerTruckTransportCompany(transportVesprini);
-	    // Exercise
-	    buenosAires.hireExportService(exportOrder);
-	    // Assert
-	    assertTrue(buenosAires.getShippers().contains(ivan));
-	    
+	void testShouldHireExportServiceAndAddShipper() {
+		// Set Up
+		buenosAires.registerTruckTransportCompany(transportVesprini);
+		// Exercise
+		buenosAires.hireExportService(exportOrder);
+		// Assert
+		assertTrue(buenosAires.getShippers().contains(ivan));
 	}
-	
+
 	@Test
-	void x2() {
-	    // Set Up
-	    buenosAires.registerTruckTransportCompany(transportVesprini);
-
-	    // Se configura el comportamiento personalizado para exportOrder.setTurn
-	    doAnswer(invocation -> {
-	        Object[] args = invocation.getArguments();
-	        Turn turnToSet = (Turn) args[0];
-	        when(exportOrder.getTurn()).thenReturn(turnToSet);  // Simular el comportamiento del getter
-	        return null; 
-	    }).when(exportOrder).setTurn(any(Turn.class));
-
-	    // Exercise
-	    buenosAires.hireExportService(exportOrder);
-
-	    // Verificar si exportOrder.getTurn() está correctamente asignado
-	    assertNotNull(exportOrder.getTurn());
-	    assertTrue(buenosAires.getTurns().contains(exportOrder.getTurn()));
+	void testShouldAddShipperWhenExportServiceHired() {
+		// Set Up
+		buenosAires.registerShipper(ivan);
+		buenosAires.registerTruckTransportCompany(transportVesprini);
+		// Exercise
+		buenosAires.hireExportService(exportOrder);
+		// Assert
+		assertTrue(buenosAires.getShippers().contains(ivan));
 	}
-	
+
+	@Test
+	void testShouldThrowExceptionWhenHiringExportServiceWithoutRegisteredDriver() {
+		// Set Up
+		when(transportVesprini.getDrivers()).thenReturn(List.of(luis));
+		buenosAires.registerTruckTransportCompany(transportVesprini);
+		// Assert
+		assertThrows(RuntimeException.class, () -> {
+			buenosAires.hireExportService(exportOrder);
+		}, "Driver not registered in the Managed Terminal.");
+	}
+
+	@Test
+	void testShouldThrowExceptionWhenHiringExportServiceWithoutRegisteredTruck() {
+		// Set Up
+		when(transportVesprini.getTrucks()).thenReturn(List.of(scania));
+		buenosAires.registerTruckTransportCompany(transportVesprini);
+		// Assert
+		assertThrows(RuntimeException.class, () -> {
+			buenosAires.hireExportService(exportOrder);
+		}, "Truck not registered in the Managed Terminal.");
+	}
+
+	@Test
+	void testShouldSetTurnDateWhenExportServiceHired() {
+		// Set Up
+		buenosAires.registerTruckTransportCompany(transportVesprini);
+		// Exercise
+		buenosAires.hireExportService(exportOrder);
+		// Assert
+		assertEquals(LocalDateTime.of(2023, Month.NOVEMBER, 12, 06, 00), exportOrder.getTurn().getDate());
+	}
+
+	@Test
+	void testShouldAddExportOrderToManagedTerminalList() {
+		// Set Up
+		buenosAires.registerTruckTransportCompany(transportVesprini);
+		// Exercise
+		buenosAires.hireExportService(exportOrder);
+		// Assert
+		assertTrue(buenosAires.getExportOrders().contains(exportOrder));
+	}
+
+	@Test
+	void testShouldApplyWeighingCostWhenTruckArrivesWithLoad() {
+		// Set Up
+		buenosAires.registerTruckTransportCompany(transportVesprini);
+		buenosAires.setWeighingCost(1000.00);
+		when(exportOrder.getServices()).thenReturn(List.of(weigh));
+		when(exportOrder.getLoad()).thenReturn(dry);
+		// Exercise
+		buenosAires.truckArrivedWithLoad(exportOrder, alberto, volvo,
+				LocalDateTime.of(2023, Month.NOVEMBER, 12, 12, 00));
+		// Assert
+		assertEquals(List.of(weigh), exportOrder.getServices());
+		assertEquals(1000.00, weigh.getPrice());
+	}
+
+	@Test
+	void testTruckArrivedWithLoadShouldUpdateServicesAndElectricityPriceWhenValidTruckArrival() {
+		// Set Up
+		buenosAires.setCostPerKw(2000.00);
+		buenosAires.registerTruckTransportCompany(transportVesprini);
+		when(exportOrder.getServices()).thenReturn(List.of(weigh));
+		when(exportOrder.getLoad()).thenReturn(reefer);
+		// Exercise
+		buenosAires.truckArrivedWithLoad(exportOrder, alberto, volvo,
+				LocalDateTime.of(2023, Month.NOVEMBER, 12, 12, 00));
+		// Assert
+		assertEquals(List.of(weigh), exportOrder.getServices());
+		assertEquals(2000.00, electricity.getPrice());
+		assertEquals(LocalDateTime.of(2023, Month.NOVEMBER, 12, 12, 00), electricity.getStartConnection());
+	}
+
+	@Test
+	void testTruckArrivedWithLoadShouldThrowExceptionWhenDriverDoesNotMatchOrder() {
+		// Set Up
+		buenosAires.registerTruckTransportCompany(transportVesprini);
+
+		// Assert
+		assertThrows(RuntimeException.class, () -> {
+			buenosAires.truckArrivedWithLoad(exportOrder, mock(Driver.class), scania,
+					LocalDateTime.of(2023, Month.NOVEMBER, 12, 12, 00));
+		}, "Driver does not match the order");
+	}
+
+	@Test
+	void testTruckArrivedWithLoadShouldThrowExceptionWhenTruckDoesNotMatchOrder() {
+		// Set Up
+		buenosAires.registerTruckTransportCompany(transportVesprini);
+
+		// Assert
+		assertThrows(RuntimeException.class, () -> {
+			buenosAires.truckArrivedWithLoad(exportOrder, alberto, mock(Truck.class),
+					LocalDateTime.of(2023, Month.NOVEMBER, 12, 12, 00));
+		}, "Truck does not match the order");
+	}
+
+	@Test
+	void testTruckArrivedWithLoadShouldThrowExceptionWhenShiftDiffersByMoreThan3Hours() {
+		// Set Up
+		buenosAires.registerTruckTransportCompany(transportVesprini);
+
+		// Assert
+		assertThrows(RuntimeException.class, () -> {
+			buenosAires.truckArrivedWithLoad(exportOrder, alberto, volvo,
+					LocalDateTime.of(2023, Month.NOVEMBER, 12, 2, 0));
+		}, "Shift differs by more than 3 hours.");
+	}
+
+	// ------------------------------------------------------------
+	// PROCESS OF EXPORT IMPORT
+	// ------------------------------------------------------------
+	@Test
+	void testShouldHireImportServiceAndAddConsignee() {
+		// Set Up
+		buenosAires.registerTruckTransportCompany(transportVesprini);
+		// Exercise
+		buenosAires.hireImportService(importOrder);
+		// Assert
+		assertTrue(buenosAires.getConsignees().contains(yoel));
+	}
+
+	@Test
+	void testShouldAddConsgineeWhenImportServiceHired() {
+		// Set Up
+		buenosAires.registerConsignee(yoel);
+		buenosAires.registerTruckTransportCompany(transportVesprini);
+		// Exercise
+		buenosAires.hireExportService(exportOrder);
+		// Assert
+		assertTrue(buenosAires.getConsignees().contains(yoel)); // TODO: REVISAR
+	}
+
 }

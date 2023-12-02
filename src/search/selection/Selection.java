@@ -1,13 +1,22 @@
 package search.selection;
 
-import java.util.List;
-
 import search.Search;
-import trip.Trip;
+import terminal.Terminal;
 
-public interface Selection extends Search {
+public abstract class Selection implements Search {
 
-	@Override
-	public List<Trip> filterTrips(List<Trip> trips);
+	private Terminal terminal;
+
+	public Selection(Terminal terminal) {
+		this.terminal = terminal;
+	}
+
+	public Terminal getTerminal() {
+		return terminal;
+	}
+
+	public void setTerminal(Terminal terminal) {
+		this.terminal = terminal;
+	}
 
 }

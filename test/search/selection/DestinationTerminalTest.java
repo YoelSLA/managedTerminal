@@ -102,7 +102,7 @@ class DestinationTerminalTest {
 	@Test
 	void testAArrivalDateIsCreated() {
 		// Assert
-		assertEquals(quito, destinationTerminal.getDestiny());
+		assertEquals(quito, destinationTerminal.getTerminal());
 	}
 
 	@Test
@@ -113,7 +113,7 @@ class DestinationTerminalTest {
 	@Test
 	void testTheDestinyIsNotTheSameAsTheOneYouAreLookingFor() {
 		// Exercise
-		destinationTerminal.setDestiny(rioDeJaneiro);
+		destinationTerminal.setTerminal(rioDeJaneiro);
 		// Assert
 		assertEquals(List.of(), destinationTerminal.filterTrips(List.of(tripOne, tripTwo)));
 	}

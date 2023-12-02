@@ -1,14 +1,14 @@
 package order;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import bill.Bill;
+import client.Client;
 import driver.Driver;
 import load.Load;
 import service.Service;
-import service.Washed;
+import terminal.Terminal;
 import trip.Trip;
 import truck.Truck;
 import turn.Turn;
@@ -16,45 +16,42 @@ import turn.Turn;
 public abstract class Order {
 
 	private Bill bill;
-	private LocalDateTime dateTruck;
-	private Driver driver;
+	private Client client;
+	private Terminal destiny;
 	private Load load;
-	private static Integer number;
+	private Terminal origin;
 	private List<Service> services;
 	private Trip trip;
-	private Truck truck;
 	private Turn turn;
 
-	public Order(Driver driver, Load load, Trip trip, Truck truck) {
+	public Order(Load load, Trip trip, Terminal origin, Terminal destiny, Client client, Driver driver, Truck truck) {
 		this.bill = new Bill(this);
-		this.driver = driver;
-		Order.number = (number != null) ? number + 1 : 0;
+		this.client = client;
 		this.load = load;
-		this.services = new ArrayList<Service>(List.of(new Washed(100.0, 150.0)));
-		this.truck = truck;
+		this.origin = origin;
+		this.services = new ArrayList<Service>();
 		this.trip = trip;
-	}
-
-	public Order(List<Service> servicesList, Load load, Trip trip) {
-		this.services = servicesList;
-		this.load = load;
-		this.trip = trip;
+		this.turn = new Turn(driver, truck, null);
 	}
 
 	public Bill getBill() {
 		return bill;
 	}
 
-	public LocalDateTime getDateTruck() {
-		return dateTruck;
+	public Client getClient() {
+		return client;
 	}
 
-	public Driver getDriver() {
-		return driver;
+	public Terminal getDestiny() {
+		return destiny;
 	}
 
 	public Load getLoad() {
 		return load;
+	}
+
+	public Terminal getOrigin() {
+		return origin;
 	}
 
 	public List<Service> getServices() {
@@ -65,26 +62,6 @@ public abstract class Order {
 		return trip;
 	}
 
-	public Truck getTruck() {
-		return truck;
-	}
-
-	public static Integer number() {
-		return number;
-	}
-
-	public void setDateTruck(LocalDateTime dateTruck) {
-		this.dateTruck = dateTruck;
-	}
-
-	public int getLoadEnergyConsumption() {
-		return load.getEnergyConsumption();
-	}
-
-	public Double getLoadVolume() {
-		return load.getVolume();
-	}
-
 	public Turn getTurn() {
 		return turn;
 	}
@@ -92,6 +69,10 @@ public abstract class Order {
 	public void setTurn(Turn turn) {
 		this.turn = turn;
 	}
-	
-	
+
+	public void registerService(Service service) {
+		services.add(service);
+
+	}
+
 }

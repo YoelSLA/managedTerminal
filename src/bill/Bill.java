@@ -22,9 +22,9 @@ public class Bill {
 		this.totalAmount = 0.0;
 	}
 
-	public Double getTotalAmountPerServices() {
-		return order.getServices().stream().mapToDouble(serv -> serv.getPriceFor(order)).sum();
-	}
+//	public Double getTotalAmountPerServices() {
+//		return order.getServices().stream().mapToDouble(serv -> serv.getPriceFor(order)).sum();
+//	}
 
 //	public void printInvoice() {
 //		/*

@@ -1,6 +1,6 @@
 package ship;
 
-import phase.Inbound;
+import phase.Outbound;
 import phase.Phase;
 import position.Position;
 import terminal.Terminal;
@@ -20,7 +20,7 @@ public class Ship {
 		this.imo = imo;
 		this.isOnTrip = false;
 		this.name = name;
-//		this.phase = new Inbound();
+		this.phase = new Outbound();
 		this.trip = trip;
 		this.position = getTrip().originTerminal().getPosition();
 	}
@@ -48,16 +48,13 @@ public class Ship {
 	public Trip getTrip() {
 		return trip;
 	}
-	
+
 	public Terminal getTerminal() {
 		return terminal;
 	}
-	
 
-//	public void setPosition(Position position) {
-//		this.position = position;
-//		phase.newPosition(this);
-//
+////	public void setPosition(Position position) {
+//	this.position=position;phase.newPosition(this);
 //
 //	}
 
@@ -71,31 +68,30 @@ public class Ship {
 	public void startTrip() {
 		isOnTrip = !isOnTrip;
 		terminal = getTrip().nextTerminalOf(terminal);
-	}
-	
 
-
-	public void setPhase(Phase phase) {
-		this.phase = phase;
 	}
-	
-	public void depart() {
-		terminal = getTrip().nextTerminalOf(terminal);
-		
-	}
-
-	public void notifyInminentArrival() {
-		terminal.notifyShipInminentArrival(this);
-	}
-	
-	public void notifyArrival() {
-		terminal.notifyShipArrival(this);
-	}
-	
-
-	
-	
-	
-
+//
+//	public void setPhase(Phase phase) {
+//		this.phase = phase;
+//	}
+//
+//	public void depart() {
+//		terminal = getTrip().nextTerminalOf(terminal);
+//		setPhase(phase.nextPhase());
+//
+//	}
+//
+//	public void notifyInminentArrival() {
+//		terminal.notifyShipInminentArrival(this);
+//	}
+//
+//	public void notifyArrival() {
+//		terminal.notifyShipArrival(this);
+//	}
+//
+//	public void startWorking() {
+//		// TODO Auto-generated method stub
+//		
+//	}
 
 }

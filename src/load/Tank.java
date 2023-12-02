@@ -1,23 +1,13 @@
 package load;
 
+public class Tank extends Load {
 
-/**
- *Clase que representa una carga que transporta liquidos y gases.
- *
- * @author Gabriela Fascetta
- **/
-public class Tank extends Load{
+	public Tank(Double height, Double length, Double width, Double weight) {
+		super(height, length, width, weight, "Tank");
+	}
 
-	/**
-	 * Constructor de la clase Tank.
-	 * 
-	 * @param width  El ancho de la carga en metros.
-	 * @param height  La altura de la carga en metros.
-	 * @param length La longitud de la carga en metros.
-	 * @param weight El peso de la carga en toneladas.
-	 * 
-	 */
-	public Tank(Double width, Double height, Double length, Double weight) {
-		super(width, height, length, weight);
+	@Override
+	public Integer getCode() {
+		return super.code + 3;
 	}
 }

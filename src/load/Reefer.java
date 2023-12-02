@@ -1,24 +1,24 @@
 package load;
 
-
-/**
- *Clase que representa una carga que debe mantenerse refrigerada.
- *
- * @author Gabriela Fascetta
- **/
 public class Reefer extends Load {
-	
-	/**
-	 * Constructor de la clase Reefer.
-	 * 
-	 * @param width  El ancho de la carga en metros.
-	 * @param height  La altura de la carga en metros.
-	 * @param length La longitud de la carga en metros.
-	 * @param weight El peso de la carga en toneladas.
-	 * @param energyConsumption El consumo energetico en kw/hora.
-	 */
-	public Reefer(Double width, Double height, Double length, Double weight, int energyConsumption) {
-		super(width, height, length, weight);
-		this.energyConsumption = energyConsumption;
+
+	private Double consumptionkWh;
+
+	public Reefer(Double length, Double height, Double width, Double weight, Double consumptionkWh) {
+		super(length, height, width, weight, "Reefer");
+		this.consumptionkWh = consumptionkWh;
+	}
+
+	@Override
+	public Integer getCode() {
+		return super.code + 2;
+	}
+
+	public Double getConsumptionkWh() {
+		return consumptionkWh;
+	}
+
+	public void setConsumption(Double consumptionkWh) {
+		this.consumptionkWh = consumptionkWh;
 	}
 }

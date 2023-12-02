@@ -16,17 +16,12 @@ public class DepartureDate extends SelectionDate {
 	@Override
 	public List<Trip> filterTrips(List<Trip> trips) {
 		// Filtrar las traves�as por el terminal de origen
-		List<Trip> tripsWithManagedTerminalOrigin = trips.stream().filter(t -> t.originTerminal().equals(terminal))
+		List<Trip> tripsWithManagedTerminalOrigin = trips.stream().filter(t -> t.originTerminal().equals(getTerminal()))
 				.toList();
 		// Filtrar las traves�as por otros criterios utilizando searchByCriteriaTo
 		List<Trip> filteredTrips = tripsWithManagedTerminalOrigin.stream()
 				.filter(t -> this.searchByCriteriaTo(t.getStartDate())).toList();
 		return filteredTrips;
 	}
-
-	public Terminal getOrigin() {
-		return terminal;
-	}
-	
 
 }

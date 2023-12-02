@@ -6,16 +6,15 @@ import search.criteria.Criteria;
 import search.selection.Selection;
 import terminal.Terminal;
 
-public abstract class SelectionDate implements Selection {
+public abstract class SelectionDate extends Selection {
 
 	private Criteria criteria;
 	private LocalDateTime dateForSearch;
-	protected Terminal terminal;
 
 	public SelectionDate(Criteria criteria, LocalDateTime dateForSearch, Terminal terminal) {
+		super(terminal);
 		this.criteria = criteria;
 		this.dateForSearch = dateForSearch;
-		this.terminal = terminal;
 	}
 
 	public Criteria getCriteria() {

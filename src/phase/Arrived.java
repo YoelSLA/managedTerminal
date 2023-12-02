@@ -1,8 +1,6 @@
 package phase;
 
-import ship.Ship;
-
-public final class Arrived implements Phase {
+public final class Arrived extends Phase {
 
 //	@Override
 //	public Boolean canItMoveOnToTheNext(Ship ship) {

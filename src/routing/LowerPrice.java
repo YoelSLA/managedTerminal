@@ -26,7 +26,6 @@ public class LowerPrice extends Routing {
 		return maritimeCircuit.getStretches()
 				.subList(maritimeCircuit.getPositionOf(origin), maritimeCircuit.getPositionOf(destiny)).stream()
 				.mapToDouble(Stretch::getPrice).sum();
-
 	}
 
 }
