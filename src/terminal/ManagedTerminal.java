@@ -224,7 +224,7 @@ public class ManagedTerminal implements Terminal {
 		registerWeighService(exportOrder);
 
 		// Paso 5: Agregar el servicio eléctrico solo para el contenedor Reefer.
-		registerEndOfElectricityService(List.of(exportOrder), dateToArrival);
+		registerStartElectricityService(List.of(exportOrder), dateToArrival);
 	}
 
 	/**
