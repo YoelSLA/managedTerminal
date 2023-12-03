@@ -9,19 +9,19 @@ import terminal.Terminal;
 public abstract class Routing {
 
 	public abstract MaritimeCircuit bestCircuitBetween(ManagedTerminal origin, Terminal destiny,
-			List<MaritimeCircuit> maritimeCircuits);
+			List<MaritimeCircuit> maritimeCircuits) throws Exception;
 
 	protected abstract Double calculateRouting(ManagedTerminal origin, Terminal destiny,
 			MaritimeCircuit maritimeCircuit);
 
-	public void validateMaritimeCircuits(List<MaritimeCircuit> maritimeCircuits) {
+	protected void validateMaritimeCircuits(List<MaritimeCircuit> maritimeCircuits) {
 		if (maritimeCircuits.isEmpty()) {
 			throw new RuntimeException("The maritime cirtuit must not be empty.");
 		}
 
 	}
 
-	public void validateTerminalDestinyIn(Terminal destiny, List<MaritimeCircuit> maritimeCircuits) {
+	protected void validateTerminalDestinyIn(Terminal destiny, List<MaritimeCircuit> maritimeCircuits) {
 		if (maritimeCircuits.stream().noneMatch(
 				circuit -> circuit.getStretches().stream().anyMatch(stretch -> stretch.getDestiny().equals(destiny)))) {
 			throw new RuntimeException("The destiny must be in the maritime circuits.");

@@ -19,4 +19,13 @@ public abstract class BinaryOperator implements Search {
 	public Search getRightClause() {
 		return rightClause;
 	}
+
+	public void setLeftClause(Search leftClause) {
+		this.leftClause = leftClause;
+	}
+
+	public void setRightClause(Search rightClause) {
+		this.rightClause = rightClause;
+	}
+
 }

@@ -10,34 +10,61 @@ import terminal.Terminal;
 public class Trip {
 
 	private MaritimeCircuit maritimeCircuit;
-	private static Integer numTrip = 0;
 	private Ship ship;
 	private LocalDateTime startDate;
 
 	public Trip(MaritimeCircuit maritimeCircuit, Ship ship, LocalDateTime startDate) {
 		this.maritimeCircuit = maritimeCircuit;
-		Trip.numTrip = numTrip++;
 		this.ship = ship;
-		this.assginTrip(this, ship);
 		this.startDate = startDate;
 	}
 
-	public LocalDateTime calculateArrivalDateToTerminal(Terminal terminal) {
-		// Se obtiene la terminal origen del circuito marÃ­timo.
-		final Terminal originTerminal = maritimeCircuit.originTerminal();
+	/**
+	 * Calcula la fecha estimada de llegada a una terminal específica en el circuito
+	 * marítimo.
+	 *
+	 * @param terminal Terminal de destino para la cual se calculará la fecha de
+	 *                 llegada.
+	 * @return Fecha estimada de llegada a la terminal especificada.
+	 */
+	public LocalDateTime calculateEstimatedArrivalDateToTerminal(Terminal terminal) {
+		// Se obtiene la terminal de origen del circuito marítimo.
+		final Terminal ORIGIN_TERMINAL = maritimeCircuit.originTerminal();
 
-		// Se calcula las horas totales hasta la llegada a la terminal del parÃ¡metro.
-		final Integer hoursToArrival = maritimeCircuit.calculateTotalHoursBetweenTerminals(originTerminal, terminal);
+		// Se calculan las horas totales hasta la llegada a la terminal de destino.
+		final Integer HOURS_TO_ARRIVAL = maritimeCircuit.calculateTotalHoursBetweenTerminals(ORIGIN_TERMINAL, terminal);
 
-		// Se suma las horas al startDate para obtener la fecha de llegada a la terminal
-		// del parÃ¡metro.
-		LocalDateTime arrivalDate = startDate.plus(hoursToArrival, ChronoUnit.HOURS);
+		// Se suma las horas al startDate para obtener la fecha estimada de llegada a la
+		// terminal de destino.
+		return startDate.plus(HOURS_TO_ARRIVAL, ChronoUnit.HOURS);
 
-		return arrivalDate;
 	}
 
 	public MaritimeCircuit getMaritimeCircuit() {
 		return maritimeCircuit;
+	}
+
+	/**
+	 * Obtiene la siguiente terminal en el circuito marítimo después de la terminal
+	 * proporcionada.
+	 *
+	 * @param terminal Terminal de referencia.
+	 * @return Siguiente terminal en el circuito marítimo.
+	 */
+	public Terminal getNextTerminal(Terminal terminal) {
+		// Se obtiene el índice de la terminal de referencia.
+		final Integer indexTerminal = maritimeCircuit.originTerminals().indexOf(terminal);
+		// Se retorna la siguiente terminal en el circuito marítimo.
+		return maritimeCircuit.originTerminals().get(indexTerminal + 1);
+	}
+
+	/**
+	 * Obtiene la terminal de origen del circuito marítimo de la travesía.
+	 *
+	 * @return Terminal de origen del circuito marítimo.
+	 */
+	public Terminal getOriginTerminal() {
+		return maritimeCircuit.originTerminal();
 	}
 
 	public Ship getShip() {
@@ -48,23 +75,14 @@ public class Trip {
 		return startDate;
 	}
 
-	public boolean hasATerminal(Terminal terminal) {
+	/**
+	 * Verifica si el viaje tiene una terminal específica en su circuito marítimo.
+	 *
+	 * @param terminal Terminal a verificar.
+	 * @return true si la el viaje tiene la terminal, false de lo contrario.
+	 */
+	public Boolean hasTerminal(Terminal terminal) {
 		return maritimeCircuit.hasATerminal(terminal);
-	}
-
-	public Terminal nextTerminalOf(Terminal terminal) {
-		// Se obtiene el ï¿½ndice de la terminal del parï¿½metro.
-		final Integer indexTerminal = maritimeCircuit.originTerminals().indexOf(terminal);
-		// Se retorna la siguiente terminal del parï¿½metro.
-		return maritimeCircuit.originTerminals().get(indexTerminal + 1);
-	}
-
-	public Terminal originTerminal() {
-		return maritimeCircuit.originTerminal();
-	}
-
-	private void assginTrip(Trip trip, Ship ship) {
-		ship.setTrip(trip);
 	}
 
 }

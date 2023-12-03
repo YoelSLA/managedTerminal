@@ -11,9 +11,14 @@ public class DestinationTerminal extends Selection {
 		super(destiny);
 	}
 
+	/**
+	 * Filtra una lista de viajes basándose en el terminal especificado.
+	 *
+	 * @param trips Lista de viajes a filtrar.
+	 * @return Lista de viajes filtrados que tienen el terminal especificado.
+	 */
 	@Override
 	public List<Trip> filterTrips(List<Trip> trips) {
-		return trips.stream().filter(t -> t.hasATerminal(getTerminal())).toList();
+		return trips.stream().filter(t -> t.hasTerminal(getTerminal())).toList();
 	}
-
 }

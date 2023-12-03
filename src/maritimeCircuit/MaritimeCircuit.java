@@ -10,11 +10,9 @@ import terminal.Terminal;
 
 public class MaritimeCircuit {
 
-	private static Integer numCircuit = 0;
 	private List<Stretch> stretches;
 
 	public MaritimeCircuit(List<Stretch> stretches) {
-		MaritimeCircuit.numCircuit = numCircuit++;
 		this.stretches = stretches;
 	}
 
