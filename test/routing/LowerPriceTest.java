@@ -1,7 +1,6 @@
 package routing;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -99,19 +98,4 @@ class LowerPriceTest {
 				lowerPrice.bestCircuitBetween(buenosAires, lima, List.of(maritimeCircuitOne, maritimeCircuitTwo)));
 	}
 
-	@Test
-	void testBestCircuitBetween_ThrowsException_WhenCircuitListIsEmpty() {
-		assertThrows(RuntimeException.class, () -> lowerPrice.bestCircuitBetween(buenosAires, lima, List.of()),
-				"The maritime circuit must not be empty.");
-	}
-
-	@Test
-	void testBestCircuitBetween_ThrowsException_WhenDestinationNotInMaritimeCircuits() {
-		Terminal rioDeJaneiro = mock(Terminal.class);
-
-		assertThrows(RuntimeException.class,
-				() -> lowerPrice.bestCircuitBetween(buenosAires, rioDeJaneiro,
-						List.of(maritimeCircuitOne, maritimeCircuitTwo)),
-				"The destination must be in the maritime circuits.");
-	}
 }

@@ -196,7 +196,7 @@ class ManagedTerminalTest {
 																									// Hs.
 		when(tripOne.getMaritimeCircuit()).thenReturn(maritimeCircuitOne);
 		when(tripOne.getShip()).thenReturn(bismarck);
-		when(tripOne.calculateArrivalDateToTerminal(buenosAires))
+		when(tripOne.calculateEstimatedArrivalDateToTerminal(buenosAires))
 				.thenReturn(LocalDateTime.of(2023, Month.NOVEMBER, 12, 12, 0)); // 12-11-23 | 12:00 Hs.
 
 		tripTwo = mock(Trip.class);

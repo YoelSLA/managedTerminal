@@ -22,7 +22,7 @@ public class Ship {
 		this.name = name;
 		this.phase = new Outbound();
 		this.trip = trip;
-		this.position = getTrip().originTerminal().getPosition();
+		this.position = getTrip().getOriginTerminal().getPosition();
 	}
 
 	public Position getPosition() {
@@ -67,7 +67,7 @@ public class Ship {
 
 	public void startTrip() {
 		isOnTrip = !isOnTrip;
-		terminal = getTrip().nextTerminalOf(terminal);
+		terminal = getTrip().getNextTerminal(terminal);
 
 	}
 //
@@ -93,5 +93,15 @@ public class Ship {
 //		// TODO Auto-generated method stub
 //		
 //	}
+
+	public void startWorking() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void depart() {
+		// TODO Auto-generated method stub
+
+	}
 
 }
