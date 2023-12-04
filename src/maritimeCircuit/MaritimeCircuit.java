@@ -57,4 +57,8 @@ public class MaritimeCircuit {
 		return (int) Math.round(time.toNanos() / (double) Duration.ofHours(1).toNanos());
 	}
 
+	public Boolean containsDestiny(Terminal destiny) {
+		return stretches.stream().anyMatch(s -> s.getDestiny().equals(destiny));
+	}
+
 }

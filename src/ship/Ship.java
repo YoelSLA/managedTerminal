@@ -89,18 +89,14 @@ public class Ship {
 //		terminal.notifyShipArrival(this);
 //	}
 //
-//	public void startWorking() {
-//		// TODO Auto-generated method stub
-//		
-//	}
 
 	public void startWorking() {
-		// TODO Auto-generated method stub
+		// TODO IMPLEMENTAR EN BARCO
 
 	}
 
 	public void depart() {
-		// TODO Auto-generated method stub
+		// TODO IMPLEMENTAR EN BARCO
 
 	}
 

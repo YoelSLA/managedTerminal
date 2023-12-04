@@ -13,19 +13,19 @@ public class Shipper extends Client {
 
 	@Override
 	public void sendMail(ManagedTerminal managedTerminal, Client client, Bill bill) {
-		// TODO Auto-generated method stub
+		// TODO IMPLEMENTAR MAIL
 
 	}
 
 	@Override
 	public void sendMail(ManagedTerminal managedTerminal, Client client, String string) {
-		// TODO Auto-generated method stub
+		// TODO IMPLEMENTAR MAIL
 
 	}
 
 	@Override
 	public void sendMail(ManagedTerminal managedTerminal, Client client, LocalDateTime date) {
-		// TODO Auto-generated method stub
+		// TODO IMPLEMENTAR MAIL
 
 	}
 

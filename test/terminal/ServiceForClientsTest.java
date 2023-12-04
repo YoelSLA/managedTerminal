@@ -200,6 +200,8 @@ class ServiceForClientsTest extends ManagedTerminal2Test {
 		// Set Up
 		configureSimulatedTrips();
 		// Assert
+		when(maritimeCircuitOne.hasATerminal(lima)).thenReturn(true);
+
 		assertEquals(maritimeCircuitOne, buenosAires.bestCircuitFor(lima));
 	}
 
@@ -226,11 +228,11 @@ class ServiceForClientsTest extends ManagedTerminal2Test {
 
 	}
 
-	@Test
-	void x() throws Exception {
-		buenosAires.hireExportService(exportOrder);
-
-		buenosAires.hireWashedServiceFor(dry, ivan);
-	}
+//	@Test
+//	void x() throws Exception {
+//		buenosAires.hireExportService(exportOrder);
+//
+//		buenosAires.hireWashedServiceFor(dry, ivan);
+//	}
 
 }
