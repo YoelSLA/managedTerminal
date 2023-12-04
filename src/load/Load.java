@@ -2,7 +2,6 @@ package load;
 
 public abstract class Load {
 
-	protected Integer code;
 	private Double length;
 	private String name;
 	private Double height;
@@ -10,7 +9,6 @@ public abstract class Load {
 	private Double weight;
 
 	public Load(Double height, Double length, Double width, Double weight, String name) {
-		this.code = 0; // TODO: EXPLICAR ESTO DESPUES
 		this.height = height;
 		this.name = name;
 		this.length = length;
@@ -41,7 +39,5 @@ public abstract class Load {
 	public Double getWeight() {
 		return weight;
 	}
-
-	public abstract Integer getCode();
 
 }

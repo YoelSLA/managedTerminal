@@ -23,11 +23,6 @@ class TankTest {
 	}
 
 	@Test
-	void testCodeIsThree() {
-		assertEquals(3, tank.getCode());
-	}
-
-	@Test
 	void testHeight() {
 		assertEquals(height, tank.getHeight());
 	}

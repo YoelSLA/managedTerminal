@@ -25,11 +25,6 @@ class ReeferTest {
 	}
 
 	@Test
-	void testCodeIsTwo() {
-		assertEquals(2, reefer.getCode());
-	}
-
-	@Test
 	void testHeight() {
 		assertEquals(height, reefer.getHeight());
 	}

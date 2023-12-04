@@ -11,7 +11,7 @@ class ManagedTerminal2Test {
 	protected ManagedTerminal buenosAires;
 
 	@BeforeEach
-	void setUp() {
+	void setUp() throws Exception {
 		// SHORTER TIME
 		shorterTime = new ShorterTime();
 		// ------------------------------------------------------------

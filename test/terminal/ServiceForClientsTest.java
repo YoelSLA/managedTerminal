@@ -13,7 +13,10 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import client.Shipper;
+import load.Dry;
 import maritimeCircuit.MaritimeCircuit;
+import order.ExportOrder;
 import search.binaryOperator.And;
 import search.criteria.Criteria;
 import search.selection.DestinationTerminal;
@@ -22,6 +25,7 @@ import search.selection.selectionDate.DepartureDate;
 import shippingLine.ShippingLine;
 import stretch.Stretch;
 import trip.Trip;
+import turn.Turn;
 
 class ServiceForClientsTest extends ManagedTerminal2Test {
 
@@ -46,13 +50,21 @@ class ServiceForClientsTest extends ManagedTerminal2Test {
 	private ShippingLine apmMaersk;
 	private ShippingLine seaLand;
 	// ------------------------------------------------------------
+	private Shipper ivan;
+	// ------------------------------------------------------------
+	private Dry dry;
+	// ------------------------------------------------------------
+	private Turn turnImportOrder;
+	// ------------------------------------------------------------
+	private ExportOrder exportOrder;
+	// ------------------------------------------------------------
 	private ArrivalDate arrivalDate;
 	private DestinationTerminal destinationTerminal;
 	private DepartureDate departureDate;
 	private And and;
 
 	@BeforeEach
-	void setUp() {
+	void setUp() throws Exception {
 		super.setUp();
 		// TERMINAL
 		guayaquil = mock(Terminal.class);
@@ -127,6 +139,20 @@ class ServiceForClientsTest extends ManagedTerminal2Test {
 		when(seaLand.getMaritimeCircuits()).thenReturn(List.of(maritimeCircuitTwo));
 		when(seaLand.getTrips()).thenReturn(List.of(tripTwo));
 		// ------------------------------------------------------------------------------------------
+		ivan = mock(Shipper.class);
+		// ------------------------------------------------------------------------------------------
+		dry = mock(Dry.class);
+		// ------------------------------------------------------------------------------------------
+		// TURN
+		turnImportOrder = mock(Turn.class);
+		when(turnImportOrder.getDriver()).thenReturn(null);
+		// ------------------------------------------------------------------------------------------
+		// EXPORT ORDER
+		exportOrder = mock(ExportOrder.class);
+		when(exportOrder.getClient()).thenReturn(ivan);
+		when(exportOrder.getLoad()).thenReturn(dry);
+		// ------------------------------------------------------------------------------------------
+		// SELECTION
 		arrivalDate = new ArrivalDate(Criteria.GREATHER_THAN, LocalDate.of(2023, Month.NOVEMBER, 10), lima); // 10-11-23
 		departureDate = new DepartureDate(Criteria.EQUALS, LocalDate.of(2023, Month.NOVEMBER, 12), buenosAires); // 12-11-23
 		destinationTerminal = new DestinationTerminal(guayaquil);
@@ -197,6 +223,14 @@ class ServiceForClientsTest extends ManagedTerminal2Test {
 				.thenReturn(LocalDateTime.of(2023, Month.NOVEMBER, 13, 10, 00)); // 13-11-23 | 10:00 Hs.
 		when(tripTwo.calculateEstimatedArrivalDateToTerminal(guayaquil))
 				.thenReturn(LocalDateTime.of(2023, Month.NOVEMBER, 13, 18, 00)); // 13-11-23 | 18:00 Hs.
+
+	}
+
+	@Test
+	void x() throws Exception {
+		buenosAires.hireExportService(exportOrder);
+
+		buenosAires.hireWashedServiceFor(dry, ivan);
 	}
 
 }

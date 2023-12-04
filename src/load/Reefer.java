@@ -9,11 +9,6 @@ public class Reefer extends Load {
 		this.consumptionkWh = consumptionkWh;
 	}
 
-	@Override
-	public Integer getCode() {
-		return super.code + 2;
-	}
-
 	public Double getConsumptionkWh() {
 		return consumptionkWh;
 	}
@@ -21,4 +16,5 @@ public class Reefer extends Load {
 	public void setConsumption(Double consumptionkWh) {
 		this.consumptionkWh = consumptionkWh;
 	}
+
 }

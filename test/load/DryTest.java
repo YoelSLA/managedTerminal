@@ -23,11 +23,6 @@ class DryTest {
 	}
 
 	@Test
-	void testCodeIsOne() {
-		assertEquals(1, dry.getCode());
-	}
-
-	@Test
 	void testHeight() {
 		assertEquals(height, dry.getHeight());
 	}

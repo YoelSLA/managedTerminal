@@ -1,8 +1,6 @@
 package terminal;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -99,6 +97,7 @@ class ManagedTerminalTest {
 
 	@BeforeEach
 	void setUp() {
+
 		// ROUTING
 		ferFewerIntermediateTerminals = mock(Routing.class);
 		// ------------------------------------------------------------------------------------------
@@ -362,163 +361,6 @@ class ManagedTerminalTest {
 		buenosAires.registerTruckTransportCompany(transportVesprini);
 		// Assert
 		assertEquals(List.of(transportVesprini), buenosAires.getTruckTransportCompanies());
-	}
-
-	// ------------------------------------------------------------
-	// PROCESS OF EXPORT ORDER
-	// ------------------------------------------------------------
-	@Test
-	void testShouldHireExportServiceAndAddShipper() {
-		// Set Up
-		buenosAires.registerTruckTransportCompany(transportVesprini);
-		// Exercise
-		buenosAires.hireExportService(exportOrder);
-		// Assert
-		assertTrue(buenosAires.getShippers().contains(ivan));
-	}
-
-	@Test
-	void testShouldAddShipperWhenExportServiceHired() {
-		// Set Up
-		buenosAires.registerShipper(ivan);
-		buenosAires.registerTruckTransportCompany(transportVesprini);
-		// Exercise
-		buenosAires.hireExportService(exportOrder);
-		// Assert
-		assertTrue(buenosAires.getShippers().contains(ivan));
-	}
-
-	@Test
-	void testShouldThrowExceptionWhenHiringExportServiceWithoutRegisteredDriver() {
-		// Set Up
-		when(transportVesprini.getDrivers()).thenReturn(List.of(luis));
-		buenosAires.registerTruckTransportCompany(transportVesprini);
-		// Assert
-		assertThrows(RuntimeException.class, () -> {
-			buenosAires.hireExportService(exportOrder);
-		}, "Driver not registered in the Managed Terminal.");
-	}
-
-	@Test
-	void testShouldThrowExceptionWhenHiringExportServiceWithoutRegisteredTruck() {
-		// Set Up
-		when(transportVesprini.getTrucks()).thenReturn(List.of(scania));
-		buenosAires.registerTruckTransportCompany(transportVesprini);
-		// Assert
-		assertThrows(RuntimeException.class, () -> {
-			buenosAires.hireExportService(exportOrder);
-		}, "Truck not registered in the Managed Terminal.");
-	}
-
-	@Test
-	void testShouldSetTurnDateWhenExportServiceHired() {
-		// Set Up
-		buenosAires.registerTruckTransportCompany(transportVesprini);
-		// Exercise
-		buenosAires.hireExportService(exportOrder);
-		// Assert
-		assertEquals(LocalDateTime.of(2023, Month.NOVEMBER, 12, 06, 00), exportOrder.getTurn().getDate());
-	}
-
-	@Test
-	void testShouldAddExportOrderToManagedTerminalList() {
-		// Set Up
-		buenosAires.registerTruckTransportCompany(transportVesprini);
-		// Exercise
-		buenosAires.hireExportService(exportOrder);
-		// Assert
-		assertTrue(buenosAires.getExportOrders().contains(exportOrder));
-	}
-
-	@Test
-	void testShouldApplyWeighingCostWhenTruckArrivesWithLoad() {
-		// Set Up
-		buenosAires.registerTruckTransportCompany(transportVesprini);
-		buenosAires.setWeighingCost(1000.00);
-		when(exportOrder.getServices()).thenReturn(List.of(weigh));
-		when(exportOrder.getLoad()).thenReturn(dry);
-		// Exercise
-		buenosAires.truckArrivedWithLoad(exportOrder, alberto, volvo,
-				LocalDateTime.of(2023, Month.NOVEMBER, 12, 12, 00));
-		// Assert
-		assertEquals(List.of(weigh), exportOrder.getServices());
-		assertEquals(1000.00, weigh.getPrice());
-	}
-
-	@Test
-	void testTruckArrivedWithLoadShouldUpdateServicesAndElectricityPriceWhenValidTruckArrival() {
-		// Set Up
-		buenosAires.setCostPerKw(2000.00);
-		buenosAires.registerTruckTransportCompany(transportVesprini);
-		when(exportOrder.getServices()).thenReturn(List.of(weigh));
-		when(exportOrder.getLoad()).thenReturn(reefer);
-		// Exercise
-		buenosAires.truckArrivedWithLoad(exportOrder, alberto, volvo,
-				LocalDateTime.of(2023, Month.NOVEMBER, 12, 12, 00));
-		// Assert
-		assertEquals(List.of(weigh), exportOrder.getServices());
-		assertEquals(2000.00, electricity.getPrice());
-		assertEquals(LocalDateTime.of(2023, Month.NOVEMBER, 12, 12, 00), electricity.getStartConnection());
-	}
-
-	@Test
-	void testTruckArrivedWithLoadShouldThrowExceptionWhenDriverDoesNotMatchOrder() {
-		// Set Up
-		buenosAires.registerTruckTransportCompany(transportVesprini);
-
-		// Assert
-		assertThrows(RuntimeException.class, () -> {
-			buenosAires.truckArrivedWithLoad(exportOrder, mock(Driver.class), scania,
-					LocalDateTime.of(2023, Month.NOVEMBER, 12, 12, 00));
-		}, "Driver does not match the order");
-	}
-
-	@Test
-	void testTruckArrivedWithLoadShouldThrowExceptionWhenTruckDoesNotMatchOrder() {
-		// Set Up
-		buenosAires.registerTruckTransportCompany(transportVesprini);
-
-		// Assert
-		assertThrows(RuntimeException.class, () -> {
-			buenosAires.truckArrivedWithLoad(exportOrder, alberto, mock(Truck.class),
-					LocalDateTime.of(2023, Month.NOVEMBER, 12, 12, 00));
-		}, "Truck does not match the order");
-	}
-
-	@Test
-	void testTruckArrivedWithLoadShouldThrowExceptionWhenShiftDiffersByMoreThan3Hours() {
-		// Set Up
-		buenosAires.registerTruckTransportCompany(transportVesprini);
-
-		// Assert
-		assertThrows(RuntimeException.class, () -> {
-			buenosAires.truckArrivedWithLoad(exportOrder, alberto, volvo,
-					LocalDateTime.of(2023, Month.NOVEMBER, 12, 2, 0));
-		}, "Shift differs by more than 3 hours.");
-	}
-
-	// ------------------------------------------------------------
-	// PROCESS OF EXPORT IMPORT
-	// ------------------------------------------------------------
-	@Test
-	void testShouldHireImportServiceAndAddConsignee() {
-		// Set Up
-		buenosAires.registerTruckTransportCompany(transportVesprini);
-		// Exercise
-		buenosAires.hireImportService(importOrder);
-		// Assert
-		assertTrue(buenosAires.getConsignees().contains(yoel));
-	}
-
-	@Test
-	void testShouldAddConsgineeWhenImportServiceHired() {
-		// Set Up
-		buenosAires.registerConsignee(yoel);
-		buenosAires.registerTruckTransportCompany(transportVesprini);
-		// Exercise
-		buenosAires.hireExportService(exportOrder);
-		// Assert
-		assertTrue(buenosAires.getConsignees().contains(yoel)); // TODO: REVISAR
 	}
 
 }

@@ -6,8 +6,4 @@ public class Tank extends Load {
 		super(height, length, width, weight, "Tank");
 	}
 
-	@Override
-	public Integer getCode() {
-		return super.code + 3;
-	}
 }

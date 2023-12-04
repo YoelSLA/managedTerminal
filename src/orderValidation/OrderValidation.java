@@ -7,6 +7,13 @@ import truck.Truck;
 
 public abstract class OrderValidation {
 
+	public static void runFullOrderValidations(ManagedTerminal managedTerminal, Order order, Driver driver,
+			Truck truck) {
+		validateOrderInTerminal(managedTerminal, order);
+		validateDriverAndTruckWithClientInfo(order, driver, truck);
+
+	}
+
 	public static void validateOrderInTerminal(ManagedTerminal managedTerminal, Order order) {
 		validateDriverInTerminal(managedTerminal, order.getTurn().getDriver());
 		validateTruckInTerminal(managedTerminal, order.getTurn().getTruck());
@@ -23,10 +30,9 @@ public abstract class OrderValidation {
 		if (!managedTerminal.isTruckRegistered(truck)) {
 			throw new RuntimeException("Truck not registered in the Managed Teminal.");
 		}
-
 	}
 
-	public static void validateDriverAndTruckWithClientInfo(Order order, Driver driver, Truck truck) {
+	private static void validateDriverAndTruckWithClientInfo(Order order, Driver driver, Truck truck) {
 		validateDriverInOrder(order, driver);
 		validateTruckInOrder(order, truck);
 	}

@@ -6,9 +6,4 @@ public class Dry extends Load {
 		super(height, length, width, weight, "Dry");
 	}
 
-	@Override
-	public Integer getCode() {
-		return super.code + 1;
-	}
-
 }
