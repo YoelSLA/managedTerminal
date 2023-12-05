@@ -4,6 +4,9 @@ import java.time.Duration;
 
 import terminal.Terminal;
 
+/**
+ * Representa un tramo (stretch) entre dos terminales en un circuito marítimo.
+ */
 public class Stretch {
 
 	private Terminal destiny;
@@ -34,19 +37,24 @@ public class Stretch {
 		return time;
 	}
 
-	public Boolean hasATerminal(Terminal terminal) {
-		return origin.equals(terminal) || destiny.equals(terminal);
-	}
-
 	public void setTime(Duration time) {
 		this.time = time;
 	}
 
 	public void setPrice(Double price) throws Exception {
 		if (price < 0) {
-			throw new RuntimeException("Te price muste be positive.");
+			throw new RuntimeException("The price must be positive.");
 		}
 		this.price = price;
 	}
 
+	/**
+	 * Verifica si una terminal está presente en el tramo.
+	 *
+	 * @param terminal La terminal a verificar.
+	 * @return true si la terminal está en el tramo, false de lo contrario.
+	 */
+	public Boolean hasTerminal(Terminal terminal) {
+		return origin.equals(terminal) || destiny.equals(terminal);
+	}
 }

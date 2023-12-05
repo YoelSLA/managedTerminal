@@ -298,8 +298,9 @@ public class ManagedTerminal implements Terminal {
 	 * Contrata el servicio de importación para una orden de importación específica.
 	 *
 	 * @param importOrder Orden de importación para la cual se contrata el servicio.
+	 * @throws Exception
 	 */
-	public void hireImportService(ImportOrder importOrder) {
+	public void hireImportService(ImportOrder importOrder) throws Exception {
 		// Se verifica si el consignee está registrado en la terminal
 		// gestionada; caso contrario, registrarlo.
 		registerConsigneeIfNew((Consignee) importOrder.getClient());
@@ -361,12 +362,18 @@ public class ManagedTerminal implements Terminal {
 	public void notifyShipArrival(Ship ship) {
 		// Se le da la orden al buque de empezar el trabajo.
 		ship.startWorking();
-		// Se registra la fecha de finalización del servicio eléctrico para órdenes de
-		// exportación que contengan cargas Reefer.
-		registerEndOfElectricityService(exportOrders, calculateEstimatedArrivalDateToManagedTerminal(ship.getTrip()));
-		// Se registra la fecha de inicio servicio eléctrico para órdenes de importación
-		// que contengan cargas Reefer.
-		registerStartElectricityService(importOrders, calculateEstimatedArrivalDateToManagedTerminal(ship.getTrip()));
+		try {
+			// Se registra la fecha de finalización del servicio eléctrico para órdenes de
+			// exportación que contengan cargas Reefer.
+			registerEndOfElectricityService(exportOrders,
+					calculateEstimatedArrivalDateToManagedTerminal(ship.getTrip()));
+			// Se registra la fecha de inicio servicio eléctrico para órdenes de importación
+			// que contengan cargas Reefer.
+			registerStartElectricityService(importOrders,
+					calculateEstimatedArrivalDateToManagedTerminal(ship.getTrip()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		// Se envia la notifacación a todos los clientes que su buque ha llegado.
 		sendArrivalNotificationsToClients(ship, importOrders);
 		// Se le da la orden de partida al buque.
@@ -422,8 +429,13 @@ public class ManagedTerminal implements Terminal {
 	 * @param ship Buque que ha partido de la terminal gestionada.
 	 */
 	private void notifyConsigneesAboutCargoDeparture(Ship ship) {
-		exportOrders.stream().filter(e -> e.getTrip().equals(ship.getTrip())).forEach(e -> e.getClient().sendMail(this,
-				e.getClient(), ship.getTrip().calculateEstimatedArrivalDateToTerminal(this)));
+		exportOrders.stream().filter(e -> e.getTrip().equals(ship.getTrip())).forEach(e -> {
+			try {
+				e.getClient().sendMail(this, e.getClient(),
+						ship.getTrip().calculateEstimatedArrivalDateToTerminal(this));
+			} catch (Exception e1) {
+			}
+		});
 	}
 
 	/**
@@ -435,8 +447,12 @@ public class ManagedTerminal implements Terminal {
 	 *               de llegada.
 	 */
 	private void sendArrivalNotificationsToClients(Ship ship, List<? extends Order> orders) {
-		orders.stream().filter(order -> order.getTrip().equals(ship.getTrip()))
-				.forEach(this::sendArrivalNotificationToClient);
+		orders.stream().filter(order -> order.getTrip().equals(ship.getTrip())).forEach(t -> {
+			try {
+				sendArrivalNotificationToClient(t);
+			} catch (Exception e) {
+			}
+		});
 	}
 
 	/**
@@ -444,8 +460,9 @@ public class ManagedTerminal implements Terminal {
 	 * orden.
 	 *
 	 * @param order Orden para la cual se enviará la notificación de llegada.
+	 * @throws Exception
 	 */
-	private void sendArrivalNotificationToClient(Order order) {
+	private void sendArrivalNotificationToClient(Order order) throws Exception {
 		Client client = order.getClient();
 		LocalDateTime arrivalDate = order.getTrip().calculateEstimatedArrivalDateToTerminal(this);
 		client.sendMail(this, client, arrivalDate.toString());
@@ -599,8 +616,9 @@ public class ManagedTerminal implements Terminal {
 	 * gestionada.
 	 *
 	 * @return La fecha estimada de llegada del viaje a la terminal gestionada.
+	 * @throws Exception
 	 */
-	private LocalDateTime calculateEstimatedArrivalDateToManagedTerminal(Trip trip) {
+	private LocalDateTime calculateEstimatedArrivalDateToManagedTerminal(Trip trip) throws Exception {
 		return trip.calculateEstimatedArrivalDateToTerminal(this);
 	}
 
@@ -635,8 +653,9 @@ public class ManagedTerminal implements Terminal {
 	 *
 	 * @param exportOrder Orden de exportación para la cual se establecerá la fecha
 	 *                    del turno.
+	 * @throws Exception
 	 */
-	private void setTurnDateForExportOrder(ExportOrder exportOrder) {
+	private void setTurnDateForExportOrder(ExportOrder exportOrder) throws Exception {
 		exportOrder.getTurn().setDate(
 				calculateEstimatedArrivalDateToManagedTerminal(exportOrder.getTrip()).minus(6, ChronoUnit.HOURS));
 	}
@@ -647,8 +666,9 @@ public class ManagedTerminal implements Terminal {
 	 *
 	 * @param exportOrder Orden de importación para la cual se establecerá la fecha
 	 *                    del turno.
+	 * @throws Exception
 	 */
-	private void setTurnDateForImportOrder(ImportOrder importOrder) {
+	private void setTurnDateForImportOrder(ImportOrder importOrder) throws Exception {
 		importOrder.getTurn().setDate(
 				calculateEstimatedArrivalDateToManagedTerminal(importOrder.getTrip()).plus(6, ChronoUnit.HOURS));
 	}

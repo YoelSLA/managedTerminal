@@ -96,7 +96,7 @@ class ManagedTerminalTest {
 	private Routing ferFewerIntermediateTerminals;
 
 	@BeforeEach
-	void setUp() {
+	void setUp() throws Exception {
 
 		// ROUTING
 		ferFewerIntermediateTerminals = mock(Routing.class);

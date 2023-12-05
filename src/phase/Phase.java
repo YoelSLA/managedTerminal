@@ -1,20 +1,25 @@
 package phase;
 
+import ship.Ship;
+
 public abstract class Phase {
 
-//	Phase nextPhase();
-//
-//	Boolean canItMoveOnToTheNext(Ship ship);
-//
-//	void notifyToTerminal(Ship ship);
-//
-//	if(phase.canItMoveOnToTheNext(this))
-//
-//	{
-//		setPhase(phase.nextPhase());
-//		phase.notifyToTerminal(this);
-//	}
-//
-//	void newPosition(Ship ship);
+	public void changePhase(Ship ship) {
+		ship.setPhase(ship.getPhase().nextPhase());
+	}
 
+	public void proceedToNextPhase(Ship ship) {
+		if (canItGoToTheNextPhase(ship)) {
+			communicateWithTerminal(ship);
+			changePhase(ship);
+		}
+	}
+
+	protected void communicateWithTerminal(Ship ship) {
+		// METODO HOOK
+	}
+
+	protected abstract Phase nextPhase();
+
+	protected abstract Boolean canItGoToTheNextPhase(Ship ship);
 }

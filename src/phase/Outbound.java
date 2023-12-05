@@ -1,20 +1,17 @@
 package phase;
 
+import ship.Ship;
+
 public class Outbound extends Phase {
 
-//	@Override
-//	public Boolean canItMoveOnToTheNext(Ship ship) {
-//		return ship.getPosition().distanceInKilometersBetween(ship.getPosition(),
-//				ship.getTerminal().getPosition()) < 50;
-//	}
-//
-//	@Override
-//	public Inbound nextPhase() {
-//		return new Inbound();
-//	}
-//
-//	@Override
-//	public void notifyToTerminal(Ship ship) {	
-//		ship.notifiyInminentArrival(ship.terminal)
-//	}
+	@Override
+	protected Boolean canItGoToTheNextPhase(Ship ship) {
+		return ship.calculateDistanceToTerminal() < 50;
+	}
+
+	@Override
+	public Phase nextPhase() {
+		return new Inbound();
+	}
+
 }

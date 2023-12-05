@@ -174,7 +174,7 @@ class ServiceForClientsTest extends ManagedTerminal2Test {
 	 * @throws Exception Si hay problemas durante la ejecución de la prueba.
 	 */
 	@Test
-	void searchTrips_FromBuenosAiresWithSpecificCriteria_ReturnsExpectedTrips() {
+	void searchTrips_FromBuenosAiresWithSpecificCriteria_ReturnsExpectedTrips() throws Exception {
 		// Set Up
 		configureSimulatedTrips();
 		// Criterio de búsqueda compuesto (AND)
@@ -205,7 +205,7 @@ class ServiceForClientsTest extends ManagedTerminal2Test {
 		assertEquals(maritimeCircuitOne, buenosAires.bestCircuitFor(lima));
 	}
 
-	private void configureSimulatedTrips() {
+	private void configureSimulatedTrips() throws Exception {
 		// Se configura el primer viaje.
 		when(tripOne.hasTerminal(buenosAires)).thenReturn(true);
 		when(tripOne.hasTerminal(guayaquil)).thenReturn(false);

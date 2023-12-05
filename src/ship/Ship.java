@@ -25,10 +25,6 @@ public class Ship {
 		this.position = getTrip().getOriginTerminal().getPosition();
 	}
 
-	public Position getPosition() {
-		return position;
-	}
-
 	public String getImo() {
 		return imo;
 	}
@@ -42,7 +38,12 @@ public class Ship {
 	}
 
 	public Phase getPhase() {
+
 		return phase;
+	}
+
+	public Position getPosition() {
+		return position;
 	}
 
 	public Trip getTrip() {
@@ -53,51 +54,54 @@ public class Ship {
 		return terminal;
 	}
 
-////	public void setPosition(Position position) {
-//	this.position=position;phase.newPosition(this);
-//
-//	}
+	public void setPhase(Phase phase) {
+		this.phase = phase;
+	}
 
-	public void setTrip(Trip trip) {
+	public void setPosition(Position position) {
+		this.position = position;
+		phase.proceedToNextPhase(this);
+	}
+
+	public void setTrip(Trip trip) throws Exception {
 		if (isOnTrip) {
 			throw new RuntimeException("The ship has already started the trip");
 		}
 		this.trip = trip;
 	}
 
-	public void startTrip() {
-		isOnTrip = !isOnTrip;
-		terminal = getTrip().getNextTerminal(terminal);
-
-	}
-//
-//	public void setPhase(Phase phase) {
-//		this.phase = phase;
-//	}
-//
-//	public void depart() {
-//		terminal = getTrip().nextTerminalOf(terminal);
-//		setPhase(phase.nextPhase());
-//
-//	}
-//
-//	public void notifyInminentArrival() {
-//		terminal.notifyShipInminentArrival(this);
-//	}
-//
-//	public void notifyArrival() {
-//		terminal.notifyShipArrival(this);
-//	}
-//
-
-	public void startWorking() {
-		// TODO IMPLEMENTAR EN BARCO
-
+	public Integer calculateDistanceToTerminal() {
+		return position.distanceInKilometersBetween(position, terminal.getPosition());
 	}
 
 	public void depart() {
-		// TODO IMPLEMENTAR EN BARCO
+		phase.changePhase(this);
+	}
 
+	public void nextTerminal() {
+		terminal = trip.getNextTerminal(getTerminal());
+	}
+
+	public void notifyArrival() {
+		terminal.notifyShipArrival(this);
+	}
+
+	public void notifyDeparture() {
+		terminal.notifyShipDeparture(this);
+	}
+
+	public void notifyInminentArrival() {
+		terminal.notifyShipInminentArrival(this);
+	}
+
+	public void startTrip() {
+		isOnTrip = !isOnTrip;
+
+	}
+
+	public void startWorking() {
+		phase.changePhase(this);
+		System.out.println("The start of work begins...");
 	}
 
 }

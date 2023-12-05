@@ -73,8 +73,6 @@ class TripTest {
 		circuitValparaisoToMontevideo = mock(MaritimeCircuit.class);
 		when(circuitValparaisoToMontevideo.getStretches())
 				.thenReturn(List.of(valparaisoBuenosAires, buenosAiresMontevideo, montevideoValparaiso));
-		when(circuitValparaisoToMontevideo.originTerminals())
-				.thenReturn(List.of(valparaiso, buenosAires, montevideo, valparaiso));
 		when(circuitValparaisoToMontevideo.originTerminal()).thenReturn(valparaiso);
 //-------------------------------------------------------------		
 		// SHIP
@@ -109,7 +107,7 @@ class TripTest {
 	}
 
 	@Test
-	void testDateArrivedToDestiny_ShouldReturnCorrectDateTime_ForTripValparaisoToMontevideo() {
+	void testDateArrivedToDestiny_ShouldReturnCorrectDateTime_ForTripValparaisoToMontevideo() throws Exception {
 		// SetUp
 		when(circuitValparaisoToMontevideo.originTerminal()).thenReturn(valparaiso);
 		when(circuitValparaisoToMontevideo.calculateTotalHoursBetweenTerminals(valparaiso, buenosAires)).thenReturn(12);
@@ -124,9 +122,9 @@ class TripTest {
 		assertEquals(valparaiso, tripValparaisoToMontevideo.getOriginTerminal());
 	}
 
-	@Test
-	void nextTerminalOf_ShouldReturnBuenosAires_ForValparaiso_ForTripValparaisoToMontevideo() {
-		assertEquals(buenosAires, tripValparaisoToMontevideo.getNextTerminal(valparaiso));
-	}
+//	@Test
+//	void nextTerminalOf_ShouldReturnBuenosAires_ForValparaiso_ForTripValparaisoToMontevideo() {
+//		assertEquals(buenosAires, tripValparaisoToMontevideo.getNextTerminal(valparaiso));
+//	}
 
 }

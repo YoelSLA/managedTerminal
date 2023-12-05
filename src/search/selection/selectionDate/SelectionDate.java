@@ -1,6 +1,7 @@
 package search.selection.selectionDate;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import search.criteria.Criteria;
 import search.selection.Selection;
@@ -40,8 +41,9 @@ public abstract class SelectionDate extends Selection {
 	 *
 	 * @param trip El viaje para el cual se calculará la fecha de llegada estimada.
 	 * @return La fecha de llegada estimada del viaje a la terminal.
+	 * @throws Exception
 	 */
-	protected LocalDate calculateArrivalDate(Trip trip) {
+	protected LocalDate calculateArrivalDate(Trip trip) throws Exception {
 		return trip.calculateEstimatedArrivalDateToTerminal(getTerminal()).toLocalDate();
 	}
 
@@ -61,6 +63,17 @@ public abstract class SelectionDate extends Selection {
 		default:
 			return this.searchDate.isAfter(searchDate);
 		}
+	}
+
+	@Override
+	public List<Trip> filterTrips(List<Trip> trips) {
+		return trips.stream().filter(trip -> {
+			try {
+				return searchByCriteriaTo(calculateArrivalDate(trip));
+			} catch (Exception e) {
+			}
+			return false;
+		}).toList();
 	}
 
 }

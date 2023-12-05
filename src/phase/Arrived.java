@@ -1,19 +1,22 @@
 package phase;
 
-public final class Arrived extends Phase {
+import ship.Ship;
 
-//	@Override
-//	public Boolean canItMoveOnToTheNext(Ship ship) {
-//		return false;
-//	}
-//	
-//	@Override
-//	public Working nextPhase() {
-//		return new Working();
-//	}
-//
-//	@Override
-//	public void notifyToTerminal(Ship ship) {
-//		
-//	}
+public class Arrived extends Phase {
+
+	@Override
+	protected Boolean canItGoToTheNextPhase(Ship ship) {
+		return false;
+	}
+
+	@Override
+	protected void communicateWithTerminal(Ship ship) {
+		ship.notifyArrival();
+	}
+
+	@Override
+	protected Phase nextPhase() {
+		return new Working();
+	}
+
 }

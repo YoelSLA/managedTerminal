@@ -1,9 +1,21 @@
 package phase;
 
-public final class Working extends Phase {
+import ship.Ship;
 
-//	@Override
-//	public Departing nextPhase() {
-//		return new Departing();
-//	}
+public class Working extends Phase {
+
+	@Override
+	protected Boolean canItGoToTheNextPhase(Ship ship) {
+		return false;
+	}
+
+	protected void communicateWithTerminal(Ship ship) {
+		ship.startWorking();
+	}
+
+	@Override
+	protected Phase nextPhase() {
+		return new Departing();
+	}
+
 }
